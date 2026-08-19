@@ -1,0 +1,169 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- Enums -------------------------------------------------------------
+
+enum SubscriptionStatus {
+  none
+  trialing
+  active
+  expired
+}
+
+enum LoadStatus {
+  open
+  covered
+  expired
+}
+
+enum RateUnit {
+  flat
+  per_mile
+}
+
+// The 7 confirmed escort-position types to launch with (see PHASE1_PLAN.md Day 0 prep).
+enum EscortPosition {
+  LEAD
+  CHASE
+  HIGH_POLE
+  STEER
+  ROUTE_SURVEY
+  THIRD_CAR
+  FOURTH_CAR
+}
+
+// --- Models --------------------------------------------------------------
+
+// One login per email. No general role enum here on purpose — Load Manager
+// and Pilot Car capabilities are independent profile records a User may or
+// may not have. See PHASE1_PLAN.md "Access control model".
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  isAdmin      Boolean  @default(false) @map("is_admin")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  loadManagerProfile LoadManagerProfile?
+  pilotCarProfile    PilotCarProfile?
+
+  @@map("users")
+}
+
+// Presence of this record means the user can post loads. Always free,
+// no subscription check, ever.
+model LoadManagerProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique @map("user_id")
+  companyName String   @map("company_name")
+  phone       String
+  dotNumber   String?  @map("dot_number")
+  mcNumber    String?  @map("mc_number")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loads Load[]
+
+  @@map("load_manager_profiles")
+}
+
+// Presence of this record means the user wants driver/load-board access,
+// but every load-board-data endpoint must check subscriptionStatus
+// server-side on every request (trialing-and-not-expired, or active, only).
+model PilotCarProfile {
+  id          String @id @default(cuid())
+  userId      String @unique @map("user_id")
+  companyName String @map("company_name")
+  phone       String
+
+  homeBaseCity  String @map("home_base_city")
+  homeBaseState String @map("home_base_state")
+  homeBaseLat   Float  @map("home_base_lat")
+  homeBaseLng   Float  @map("home_base_lng")
+
+  alertRadiusMiles Int              @map("alert_radius_miles")
+  escortPositions  EscortPosition[] @map("escort_positions")
+  alertsMuted      Boolean          @default(false) @map("alerts_muted")
+
+  // "signed up" for admin-visibility purposes
+  createdAt DateTime @default(now()) @map("created_at")
+
+  subscriptionStatus SubscriptionStatus @default(none) @map("subscription_status")
+  // Set the moment the profile is created.
+  trialStartedAt     DateTime?          @map("trial_started_at")
+  trialEndsAt        DateTime?          @map("trial_ends_at")
+  // Set the moment subscriptionStatus first transitions to `active`; null until then.
+  paidStartedAt      DateTime?          @map("paid_started_at")
+
+  // Stripe columns can exist now even though Stripe wiring is Phase 2.
+  stripeCustomerId     String? @map("stripe_customer_id")
+  stripeSubscriptionId String? @map("stripe_subscription_id")
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loadAlerts LoadAlert[]
+
+  @@map("pilot_car_profiles")
+}
+
+model Load {
+  id String @id @default(cuid())
+
+  originCity  String @map("origin_city")
+  originState String @map("origin_state")
+  originLat   Float  @map("origin_lat")
+  originLng   Float  @map("origin_lng")
+
+  destinationCity  String @map("destination_city")
+  destinationState String @map("destination_state")
+  destinationLat   Float  @map("destination_lat")
+  destinationLng   Float  @map("destination_lng")
+
+  date DateTime
+
+  escortPositions EscortPosition[] @map("escort_positions")
+
+  // Dimensions and weight — captured now even though auto-flagging from
+  // them is deferred past launch, so it's not a painful migration later.
+  dimensionWidthFt  Float? @map("dimension_width_ft")
+  dimensionHeightFt Float? @map("dimension_height_ft")
+  dimensionLengthFt Float? @map("dimension_length_ft")
+  weightLbs         Float? @map("weight_lbs")
+
+  rate     Decimal?  @db.Decimal(10, 2)
+  rateUnit RateUnit? @map("rate_unit")
+
+  postedById String             @map("posted_by_id")
+  postedBy   LoadManagerProfile @relation(fields: [postedById], references: [id])
+
+  status    LoadStatus @default(open)
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  loadAlerts LoadAlert[]
+
+  @@map("loads")
+}
+
+// A simple send log so a load never emails the same profile twice
+// (e.g., on repost or edit), and so the Load Manager dashboard's
+// "X notifications sent" stat has something to count.
+model LoadAlert {
+  id                String   @id @default(cuid())
+  loadId            String   @map("load_id")
+  pilotCarProfileId String   @map("pilot_car_profile_id")
+  sentAt            DateTime @default(now()) @map("sent_at")
+
+  load            Load            @relation(fields: [loadId], references: [id], onDelete: Cascade)
+  pilotCarProfile PilotCarProfile @relation(fields: [pilotCarProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([loadId, pilotCarProfileId])
+  @@map("load_alerts")
+}
