@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -15,7 +16,12 @@ export default async function LoadManagerDashboardPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold">Load Manager Dashboard</h1>
-        <p className="text-gray-600">{profile.companyName}</p>
+        <p className="text-gray-600">
+          {profile.companyName} ·{" "}
+          <Link href="/dashboard/load-manager/edit" className="underline">
+            Edit profile
+          </Link>
+        </p>
       </div>
 
       <section className="rounded border border-gray-300 p-4">

@@ -6,23 +6,39 @@ import { ESCORT_POSITIONS } from "@/lib/escort-positions";
 import { US_STATES } from "@/lib/us-states";
 import type { EscortPosition } from "@/generated/prisma/enums";
 
+type InitialValues = {
+  companyName: string;
+  phone: string;
+  homeBaseCity: string;
+  homeBaseState: string;
+  alertRadiusMiles: number;
+  escortPositions: EscortPosition[];
+};
+
 export function PilotCarProfileForm({
+  mode = "create",
+  initialValues,
   onCreated,
   redirectTo,
 }: {
+  mode?: "create" | "edit";
+  initialValues?: InitialValues;
   onCreated?: () => void;
   redirectTo?: string;
 }) {
   const router = useRouter();
-  const [companyName, setCompanyName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [radius, setRadius] = useState("150");
-  const [positions, setPositions] = useState<EscortPosition[]>([]);
+  const [companyName, setCompanyName] = useState(initialValues?.companyName ?? "");
+  const [phone, setPhone] = useState(initialValues?.phone ?? "");
+  const [city, setCity] = useState(initialValues?.homeBaseCity ?? "");
+  const [state, setState] = useState(initialValues?.homeBaseState ?? "");
+  const [radius, setRadius] = useState(String(initialValues?.alertRadiusMiles ?? 150));
+  const [positions, setPositions] = useState<EscortPosition[]>(
+    initialValues?.escortPositions ?? []
+  );
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [created, setCreated] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   function togglePosition(value: EscortPosition) {
     setPositions((prev) =>
@@ -33,10 +49,11 @@ export function PilotCarProfileForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setSaved(false);
     setSubmitting(true);
     try {
       const res = await fetch("/api/profiles/pilot-car", {
-        method: "POST",
+        method: mode === "edit" ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           companyName,
@@ -49,11 +66,17 @@ export function PilotCarProfileForm({
       });
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error ?? "Failed to create Pilot Car profile.");
+        setError(data.error ?? "Failed to save Pilot Car profile.");
         return;
       }
-      setCreated(true);
-      onCreated?.();
+
+      if (mode === "edit") {
+        setSaved(true);
+      } else {
+        setCreated(true);
+        onCreated?.();
+      }
+
       if (redirectTo) {
         router.push(redirectTo);
         router.refresh();
@@ -147,12 +170,13 @@ export function PilotCarProfileForm({
         </div>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
+      {saved && <p className="text-sm text-green-700">Saved.</p>}
       <button
         type="submit"
         disabled={submitting}
         className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
       >
-        {submitting ? "Saving..." : "Create Pilot Car profile"}
+        {submitting ? "Saving..." : mode === "edit" ? "Save changes" : "Create Pilot Car profile"}
       </button>
     </form>
   );

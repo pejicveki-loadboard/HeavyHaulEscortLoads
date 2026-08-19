@@ -3,6 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { EscortPosition, SubscriptionStatus } from "@/generated/prisma/enums";
+import { Prisma } from "@/generated/prisma/client";
 
 const TRIAL_LENGTH_DAYS = 30;
 
@@ -62,4 +63,43 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({ id: profile.id }, { status: 201 });
+}
+
+export async function PATCH(request: Request) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
+  }
+
+  const body = await request.json().catch(() => null);
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid input." },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const profile = await prisma.pilotCarProfile.update({
+      where: { userId: session.user.id },
+      data: {
+        companyName: parsed.data.companyName,
+        phone: parsed.data.phone,
+        homeBaseCity: parsed.data.homeBaseCity,
+        homeBaseState: parsed.data.homeBaseState,
+        alertRadiusMiles: parsed.data.alertRadiusMiles,
+        escortPositions: parsed.data.escortPositions as EscortPosition[],
+      },
+    });
+    return NextResponse.json({ id: profile.id });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025") {
+      return NextResponse.json(
+        { error: "No Pilot Car profile found." },
+        { status: 404 }
+      );
+    }
+    throw e;
+  }
 }
