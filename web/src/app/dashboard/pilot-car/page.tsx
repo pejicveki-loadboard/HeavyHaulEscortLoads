@@ -3,7 +3,9 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatSubscriptionStatus } from "@/lib/trial-status";
+import { hasLoadBoardAccess } from "@/lib/subscription";
 import { ESCORT_POSITIONS } from "@/lib/escort-positions";
+import { BrowseLoadsPanel } from "@/components/browse-loads-panel";
 
 export default async function PilotCarDashboardPage() {
   const session = await auth();
@@ -75,9 +77,25 @@ export default async function PilotCarDashboardPage() {
 
       <section className="rounded border border-gray-300 p-4">
         <h2 className="mb-2 font-semibold">Load board</h2>
-        <p className="text-sm text-gray-600">
-          Browsing and filtering loads by radius is coming in Week 2.
-        </p>
+        {hasLoadBoardAccess(profile) ? (
+          <BrowseLoadsPanel
+            savedLocations={searchLocations
+              .filter((l) => l.active)
+              .map((l) => ({
+                id: l.id,
+                label: l.label,
+                city: l.city,
+                state: l.state,
+                radiusMiles: l.radiusMiles,
+                escortPositions: l.escortPositions,
+              }))}
+          />
+        ) : (
+          <p className="text-sm text-gray-600">
+            Your trial has ended — subscribe to keep browsing loads. (Billing isn&apos;t wired up
+            yet; check back soon.)
+          </p>
+        )}
       </section>
     </div>
   );

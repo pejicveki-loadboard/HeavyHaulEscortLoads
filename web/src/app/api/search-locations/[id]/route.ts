@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { geocodeCityState } from "@/lib/geocode";
 import { EscortPosition } from "@/generated/prisma/enums";
 
 const schema = z.object({
@@ -45,12 +46,32 @@ export async function PATCH(
     );
   }
 
+  let lat = existing.lat;
+  let lng = existing.lng;
+  const cityOrStateChanged =
+    parsed.data.city !== existing.city || parsed.data.state !== existing.state;
+  if (cityOrStateChanged || lat === null || lng === null) {
+    const geocoded = await geocodeCityState(parsed.data.city, parsed.data.state);
+    if (!geocoded) {
+      return NextResponse.json(
+        {
+          error: `Couldn't find "${parsed.data.city}, ${parsed.data.state}" — check the spelling.`,
+        },
+        { status: 400 }
+      );
+    }
+    lat = geocoded.lat;
+    lng = geocoded.lng;
+  }
+
   const updated = await prisma.searchLocation.update({
     where: { id },
     data: {
       label: parsed.data.label || null,
       city: parsed.data.city,
       state: parsed.data.state,
+      lat,
+      lng,
       radiusMiles: parsed.data.radiusMiles,
       escortPositions: parsed.data.escortPositions as EscortPosition[],
       active: parsed.data.active,
