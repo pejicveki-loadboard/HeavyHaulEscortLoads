@@ -1,0 +1,169 @@
+"use client";
+
+import { useState } from "react";
+import { ESCORT_POSITIONS } from "@/lib/escort-positions";
+import { US_STATES } from "@/lib/us-states";
+import type { EscortPosition } from "@/generated/prisma/enums";
+
+export type SearchLocationValues = {
+  label: string | null;
+  city: string;
+  state: string;
+  radiusMiles: number;
+  escortPositions: EscortPosition[];
+  active: boolean;
+};
+
+export function SearchLocationForm({
+  mode,
+  locationId,
+  initialValues,
+  onSaved,
+  onCancel,
+}: {
+  mode: "create" | "edit";
+  locationId?: string;
+  initialValues?: SearchLocationValues;
+  onSaved?: () => void;
+  onCancel?: () => void;
+}) {
+  const [label, setLabel] = useState(initialValues?.label ?? "");
+  const [city, setCity] = useState(initialValues?.city ?? "");
+  const [state, setState] = useState(initialValues?.state ?? "");
+  const [radiusMiles, setRadiusMiles] = useState(String(initialValues?.radiusMiles ?? 150));
+  const [positions, setPositions] = useState<EscortPosition[]>(
+    initialValues?.escortPositions ?? []
+  );
+  const [active, setActive] = useState(initialValues?.active ?? true);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  function togglePosition(value: EscortPosition) {
+    setPositions((prev) =>
+      prev.includes(value) ? prev.filter((p) => p !== value) : [...prev, value]
+    );
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+    try {
+      const url =
+        mode === "edit" ? `/api/search-locations/${locationId}` : "/api/search-locations";
+      const res = await fetch(url, {
+        method: mode === "edit" ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          label,
+          city,
+          state,
+          radiusMiles,
+          escortPositions: positions,
+          active,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error ?? "Failed to save search location.");
+        return;
+      }
+      onSaved?.();
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-gray-300 p-4">
+      <label className="flex flex-col gap-1 text-sm">
+        Label (optional)
+        <input
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          placeholder="e.g. Truck 2 — Texas route"
+          className="rounded border border-gray-300 px-3 py-2"
+        />
+      </label>
+      <div className="flex gap-3">
+        <label className="flex flex-1 flex-col gap-1 text-sm">
+          City
+          <input
+            required
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="rounded border border-gray-300 px-3 py-2"
+          />
+        </label>
+        <label className="flex w-24 flex-col gap-1 text-sm">
+          State
+          <select
+            required
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            className="rounded border border-gray-300 px-3 py-2"
+          >
+            <option value="" disabled>
+              --
+            </option>
+            {US_STATES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <label className="flex flex-col gap-1 text-sm">
+        Alert radius (miles, up to 500)
+        <input
+          type="number"
+          min={1}
+          max={500}
+          required
+          value={radiusMiles}
+          onChange={(e) => setRadiusMiles(e.target.value)}
+          className="rounded border border-gray-300 px-3 py-2"
+        />
+      </label>
+      <div className="flex flex-col gap-1 text-sm">
+        Escort positions
+        <div className="flex flex-wrap gap-3">
+          {ESCORT_POSITIONS.map((pos) => (
+            <label key={pos.value} className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={positions.includes(pos.value)}
+                onChange={() => togglePosition(pos.value)}
+              />
+              {pos.label}
+            </label>
+          ))}
+        </div>
+      </div>
+      <label className="flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
+        Active (uncheck to pause this location without deleting it)
+      </label>
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+        >
+          {submitting ? "Saving..." : mode === "edit" ? "Save changes" : "Add location"}
+        </button>
+        {onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded border border-gray-300 px-4 py-2"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}

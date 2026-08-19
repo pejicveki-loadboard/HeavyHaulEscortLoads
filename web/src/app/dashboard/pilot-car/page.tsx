@@ -14,9 +14,11 @@ export default async function PilotCarDashboardPage() {
   });
   if (!profile) redirect("/dashboard/add-pilot-car");
 
-  const positionLabels = profile.escortPositions
-    .map((p) => ESCORT_POSITIONS.find((pos) => pos.value === p)?.label ?? p)
-    .join(", ");
+  const searchLocations = await prisma.searchLocation.findMany({
+    where: { profileId: profile.id },
+    orderBy: { createdAt: "asc" },
+  });
+  const activeCount = searchLocations.filter((l) => l.active).length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -41,14 +43,34 @@ export default async function PilotCarDashboardPage() {
       </section>
 
       <section className="rounded border border-gray-300 p-4">
-        <h2 className="mb-2 font-semibold">Your alert preferences</h2>
-        <p className="text-sm text-gray-600">
-          Home base: {profile.homeBaseCity}, {profile.homeBaseState}
-          <br />
-          Alert radius: {profile.alertRadiusMiles} miles
-          <br />
-          Escort positions: {positionLabels || "none selected"}
-        </p>
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="font-semibold">Search locations</h2>
+          <Link href="/dashboard/pilot-car/search-locations" className="text-sm underline">
+            Manage
+          </Link>
+        </div>
+        {searchLocations.length === 0 ? (
+          <p className="text-sm text-gray-600">
+            You haven&apos;t added a search location yet — add one to start receiving load
+            alerts.
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-1 text-sm text-gray-600">
+            <li>
+              {activeCount} active of {searchLocations.length} total
+            </li>
+            {searchLocations.map((location) => (
+              <li key={location.id}>
+                {location.label || `${location.city}, ${location.state}`} —{" "}
+                {location.city}, {location.state} · {location.radiusMiles} mi ·{" "}
+                {location.escortPositions
+                  .map((p) => ESCORT_POSITIONS.find((pos) => pos.value === p)?.label ?? p)
+                  .join(", ") || "no positions selected"}
+                {!location.active && " (paused)"}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="rounded border border-gray-300 p-4">

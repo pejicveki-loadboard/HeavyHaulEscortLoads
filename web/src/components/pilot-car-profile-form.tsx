@@ -2,17 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ESCORT_POSITIONS } from "@/lib/escort-positions";
-import { US_STATES } from "@/lib/us-states";
-import type { EscortPosition } from "@/generated/prisma/enums";
 
 type InitialValues = {
   companyName: string;
   phone: string;
-  homeBaseCity: string;
-  homeBaseState: string;
-  alertRadiusMiles: number;
-  escortPositions: EscortPosition[];
 };
 
 export function PilotCarProfileForm({
@@ -29,22 +22,10 @@ export function PilotCarProfileForm({
   const router = useRouter();
   const [companyName, setCompanyName] = useState(initialValues?.companyName ?? "");
   const [phone, setPhone] = useState(initialValues?.phone ?? "");
-  const [city, setCity] = useState(initialValues?.homeBaseCity ?? "");
-  const [state, setState] = useState(initialValues?.homeBaseState ?? "");
-  const [radius, setRadius] = useState(String(initialValues?.alertRadiusMiles ?? 150));
-  const [positions, setPositions] = useState<EscortPosition[]>(
-    initialValues?.escortPositions ?? []
-  );
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [created, setCreated] = useState(false);
   const [saved, setSaved] = useState(false);
-
-  function togglePosition(value: EscortPosition) {
-    setPositions((prev) =>
-      prev.includes(value) ? prev.filter((p) => p !== value) : [...prev, value]
-    );
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,14 +36,7 @@ export function PilotCarProfileForm({
       const res = await fetch("/api/profiles/pilot-car", {
         method: mode === "edit" ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          companyName,
-          phone,
-          homeBaseCity: city,
-          homeBaseState: state,
-          alertRadiusMiles: radius,
-          escortPositions: positions,
-        }),
+        body: JSON.stringify({ companyName, phone }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -114,61 +88,6 @@ export function PilotCarProfileForm({
           className="rounded border border-gray-300 px-3 py-2"
         />
       </label>
-      <div className="flex gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm">
-          Home base city
-          <input
-            required
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
-          />
-        </label>
-        <label className="flex w-24 flex-col gap-1 text-sm">
-          State
-          <select
-            required
-            value={state}
-            onChange={(e) => setState(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
-          >
-            <option value="" disabled>
-              --
-            </option>
-            {US_STATES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      <label className="flex flex-col gap-1 text-sm">
-        Alert radius (miles)
-        <input
-          type="number"
-          min={1}
-          required
-          value={radius}
-          onChange={(e) => setRadius(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-2"
-        />
-      </label>
-      <div className="flex flex-col gap-1 text-sm">
-        Escort positions
-        <div className="flex flex-wrap gap-3">
-          {ESCORT_POSITIONS.map((pos) => (
-            <label key={pos.value} className="flex items-center gap-1">
-              <input
-                type="checkbox"
-                checked={positions.includes(pos.value)}
-                onChange={() => togglePosition(pos.value)}
-              />
-              {pos.label}
-            </label>
-          ))}
-        </div>
-      </div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       {saved && <p className="text-sm text-green-700">Saved.</p>}
       <button

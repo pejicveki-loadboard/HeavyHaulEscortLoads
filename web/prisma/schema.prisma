@@ -79,22 +79,18 @@ model LoadManagerProfile {
 // Presence of this record means the user wants driver/load-board access,
 // but every load-board-data endpoint must check subscriptionStatus
 // server-side on every request (trialing-and-not-expired, or active, only).
+//
+// Home base / radius / escort positions used to live directly on this
+// model, but a company can run multiple independent searches (e.g. one
+// truck per region), so those fields moved to SearchLocation (one-to-many).
+// alertsMuted stays here as a profile-wide kill switch, separate from each
+// SearchLocation's own `active` flag.
 model PilotCarProfile {
-  id          String @id @default(cuid())
-  userId      String @unique @map("user_id")
-  companyName String @map("company_name")
+  id          String  @id @default(cuid())
+  userId      String  @unique @map("user_id")
+  companyName String  @map("company_name")
   phone       String
-
-  homeBaseCity  String @map("home_base_city")
-  homeBaseState String @map("home_base_state")
-  // Nullable until Week 2's geocoding key is wired up; profile creation
-  // during Week 1 only captures city/state.
-  homeBaseLat   Float? @map("home_base_lat")
-  homeBaseLng   Float? @map("home_base_lng")
-
-  alertRadiusMiles Int              @map("alert_radius_miles")
-  escortPositions  EscortPosition[] @map("escort_positions")
-  alertsMuted      Boolean          @default(false) @map("alerts_muted")
+  alertsMuted Boolean @default(false) @map("alerts_muted")
 
   // "signed up" for admin-visibility purposes
   createdAt DateTime @default(now()) @map("created_at")
@@ -110,10 +106,41 @@ model PilotCarProfile {
   stripeCustomerId     String? @map("stripe_customer_id")
   stripeSubscriptionId String? @map("stripe_subscription_id")
 
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  loadAlerts LoadAlert[]
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  searchLocations SearchLocation[]
 
   @@map("pilot_car_profiles")
+}
+
+// One independent saved search per Pilot Car profile -- own base
+// city/state, radius, and escort-position preferences. Matching/alerts
+// (Week 2) run per SearchLocation with no dedup across a profile's own
+// locations, so a company running 3 active locations gets independently
+// matched alerts for each.
+model SearchLocation {
+  id        String @id @default(cuid())
+  profileId String @map("profile_id")
+
+  // Free text, e.g. "Truck 2 -- Texas route". Not required.
+  label String?
+
+  city  String
+  state String
+  // Nullable until Week 2's geocoding key is wired up.
+  lat   Float?
+  lng   Float?
+
+  radiusMiles     Int              @map("radius_miles")
+  escortPositions EscortPosition[] @map("escort_positions")
+  active          Boolean          @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  profile    PilotCarProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  loadAlerts LoadAlert[]
+
+  @@map("search_locations")
 }
 
 model Load {
@@ -154,18 +181,20 @@ model Load {
   @@map("loads")
 }
 
-// A simple send log so a load never emails the same profile twice
+// A simple send log so a load never emails the same search location twice
 // (e.g., on repost or edit), and so the Load Manager dashboard's
-// "X notifications sent" stat has something to count.
+// "X notifications sent" stat has something to count. Scoped to
+// SearchLocation, not PilotCarProfile, so a profile's own locations are
+// never deduped against each other -- each is an independent search.
 model LoadAlert {
-  id                String   @id @default(cuid())
-  loadId            String   @map("load_id")
-  pilotCarProfileId String   @map("pilot_car_profile_id")
-  sentAt            DateTime @default(now()) @map("sent_at")
+  id               String   @id @default(cuid())
+  loadId           String   @map("load_id")
+  searchLocationId String   @map("search_location_id")
+  sentAt           DateTime @default(now()) @map("sent_at")
 
-  load            Load            @relation(fields: [loadId], references: [id], onDelete: Cascade)
-  pilotCarProfile PilotCarProfile @relation(fields: [pilotCarProfileId], references: [id], onDelete: Cascade)
+  load           Load           @relation(fields: [loadId], references: [id], onDelete: Cascade)
+  searchLocation SearchLocation @relation(fields: [searchLocationId], references: [id], onDelete: Cascade)
 
-  @@unique([loadId, pilotCarProfileId])
+  @@unique([loadId, searchLocationId])
   @@map("load_alerts")
 }

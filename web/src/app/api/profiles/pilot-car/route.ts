@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { EscortPosition, SubscriptionStatus } from "@/generated/prisma/enums";
+import { SubscriptionStatus } from "@/generated/prisma/enums";
 import { Prisma } from "@/generated/prisma/client";
 
 const TRIAL_LENGTH_DAYS = 30;
@@ -10,12 +10,6 @@ const TRIAL_LENGTH_DAYS = 30;
 const schema = z.object({
   companyName: z.string().trim().min(1, "Company name is required."),
   phone: z.string().trim().min(1, "Phone is required."),
-  homeBaseCity: z.string().trim().min(1, "City is required."),
-  homeBaseState: z.string().trim().min(1, "State is required."),
-  alertRadiusMiles: z.coerce.number().int().positive(),
-  escortPositions: z
-    .array(z.enum(EscortPosition))
-    .min(1, "Select at least one escort position."),
 });
 
 export async function POST(request: Request) {
@@ -52,10 +46,6 @@ export async function POST(request: Request) {
       userId: session.user.id,
       companyName: parsed.data.companyName,
       phone: parsed.data.phone,
-      homeBaseCity: parsed.data.homeBaseCity,
-      homeBaseState: parsed.data.homeBaseState,
-      alertRadiusMiles: parsed.data.alertRadiusMiles,
-      escortPositions: parsed.data.escortPositions as EscortPosition[],
       subscriptionStatus: SubscriptionStatus.trialing,
       trialStartedAt: now,
       trialEndsAt,
@@ -86,10 +76,6 @@ export async function PATCH(request: Request) {
       data: {
         companyName: parsed.data.companyName,
         phone: parsed.data.phone,
-        homeBaseCity: parsed.data.homeBaseCity,
-        homeBaseState: parsed.data.homeBaseState,
-        alertRadiusMiles: parsed.data.alertRadiusMiles,
-        escortPositions: parsed.data.escortPositions as EscortPosition[],
       },
     });
     return NextResponse.json({ id: profile.id });
