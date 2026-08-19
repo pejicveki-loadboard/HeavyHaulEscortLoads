@@ -65,6 +65,10 @@ export function OnboardingForm({
           setError(data.error ?? "Failed to create Load Manager profile.");
           return;
         }
+        // Prevent a retry (e.g. after the Pilot Car step below fails) from
+        // re-submitting this already-created profile and hitting a 409
+        // that masks the real error.
+        setWantsLoadManager(false);
       }
 
       if (wantsPilotCar) {
@@ -85,6 +89,7 @@ export function OnboardingForm({
           setError(data.error ?? "Failed to create Pilot Car profile.");
           return;
         }
+        setWantsPilotCar(false);
       }
 
       router.push("/dashboard");
