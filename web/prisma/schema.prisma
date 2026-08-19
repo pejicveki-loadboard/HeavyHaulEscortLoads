@@ -87,8 +87,10 @@ model PilotCarProfile {
 
   homeBaseCity  String @map("home_base_city")
   homeBaseState String @map("home_base_state")
-  homeBaseLat   Float  @map("home_base_lat")
-  homeBaseLng   Float  @map("home_base_lng")
+  // Nullable until Week 2's geocoding key is wired up; profile creation
+  // during Week 1 only captures city/state.
+  homeBaseLat   Float? @map("home_base_lat")
+  homeBaseLng   Float? @map("home_base_lng")
 
   alertRadiusMiles Int              @map("alert_radius_miles")
   escortPositions  EscortPosition[] @map("escort_positions")
