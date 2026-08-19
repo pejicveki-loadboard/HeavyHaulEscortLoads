@@ -19,6 +19,12 @@ export async function POST(request: Request) {
   }
   const { email, password } = parsed.data;
 
+  // TODO: this 409 lets an unauthenticated caller enumerate registered
+  // emails (unlike login, which returns a generic error either way). Fix
+  // properly once email verification exists: return the same generic
+  // response regardless of whether the email was taken, and gate account
+  // activation on the verification link instead. See ultrareview finding
+  // bug_003.
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     return NextResponse.json(
