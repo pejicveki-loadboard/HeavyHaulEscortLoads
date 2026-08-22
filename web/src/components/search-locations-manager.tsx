@@ -14,6 +14,12 @@ function positionLabels(positions: EscortPosition[]) {
     .join(", ");
 }
 
+const CHANNEL_LABELS: Record<SearchLocationRow["alertChannel"], string> = {
+  both: "Email + SMS",
+  email: "Email only",
+  sms: "SMS only",
+};
+
 export function SearchLocationsManager({ locations }: { locations: SearchLocationRow[] }) {
   const router = useRouter();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -80,7 +86,8 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
                 </p>
                 <p className="text-sm text-gray-600">
                   {location.city}, {location.state} · {location.radiusMiles} mi ·{" "}
-                  {positionLabels(location.escortPositions) || "no positions selected"}
+                  {positionLabels(location.escortPositions) || "no positions selected"} ·{" "}
+                  {CHANNEL_LABELS[location.alertChannel]}
                 </p>
               </div>
               <div className="flex shrink-0 gap-2">

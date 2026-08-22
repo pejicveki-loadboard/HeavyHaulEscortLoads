@@ -3,7 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { geocodeCityState } from "@/lib/geocode";
-import { EscortPosition } from "@/generated/prisma/enums";
+import { AlertChannelPreference, EscortPosition } from "@/generated/prisma/enums";
 
 const schema = z.object({
   label: z.string().trim().optional(),
@@ -14,6 +14,7 @@ const schema = z.object({
     .array(z.enum(EscortPosition))
     .min(1, "Select at least one escort position."),
   active: z.boolean(),
+  alertChannel: z.enum(AlertChannelPreference),
 });
 
 async function findOwnedLocation(locationId: string, userId: string) {
@@ -75,6 +76,7 @@ export async function PATCH(
       radiusMiles: parsed.data.radiusMiles,
       escortPositions: parsed.data.escortPositions as EscortPosition[],
       active: parsed.data.active,
+      alertChannel: parsed.data.alertChannel,
     },
   });
 

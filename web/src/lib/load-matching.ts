@@ -2,7 +2,7 @@ import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { AlertChannel, AlertSendStatus } from "@/generated/prisma/enums";
-import type { EscortPosition } from "@/generated/prisma/enums";
+import type { AlertChannelPreference, EscortPosition } from "@/generated/prisma/enums";
 import { sendEmail } from "@/lib/resend";
 import { sendSms } from "@/lib/twilio";
 import { normalizePhoneToE164 } from "@/lib/phone";
@@ -16,6 +16,7 @@ type MatchRow = {
   search_location_id: string;
   pilot_email: string;
   pilot_phone: string;
+  alert_channel: AlertChannelPreference;
   distance_miles: number;
 };
 
@@ -38,7 +39,10 @@ type PendingRetry = {
 // active SearchLocation on a trialing (not expired)/active PilotCarProfile,
 // with no dedup across a profile's own locations -- see PHASE1_PLAN.md Week
 // 2 Day 4. Called on load create and on edits that change origin or escort
-// positions (see the loads API routes).
+// positions (see the loads API routes). Each location's own alertChannel
+// preference (Week 2 Day 5) decides which of email/sms actually get
+// attempted; active=false mutes/pauses a location entirely (no attempt on
+// either channel), same as it always has since Week 1.
 //
 // Each match's send is attempted once inline (so the initial fan-out stays
 // "real-time" per the plan), and any failures get exactly one retry pass
@@ -49,6 +53,7 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
 
   const matches = await prisma.$queryRaw<MatchRow[]>`
     SELECT sl.id as search_location_id, u.email as pilot_email, pcp.phone as pilot_phone,
+      sl.alert_channel,
       (3959 * acos(least(1, greatest(-1,
         cos(radians(sl.lat)) * cos(radians(${load.originLat})) * cos(radians(${load.originLng}) - radians(sl.lng))
         + sin(radians(sl.lat)) * sin(radians(${load.originLat}))
@@ -57,7 +62,6 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
     JOIN pilot_car_profiles pcp ON pcp.id = sl.profile_id
     JOIN users u ON u.id = pcp.user_id
     WHERE sl.active = true
-      AND pcp.alerts_muted = false
       AND sl.lat IS NOT NULL AND sl.lng IS NOT NULL
       AND sl.escort_positions && ${load.escortPositions}::"EscortPosition"[]
       AND (
@@ -73,7 +77,8 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
   const toRetry: PendingRetry[] = [];
 
   for (const match of matches) {
-    for (const channel of [AlertChannel.email, AlertChannel.sms]) {
+    const wantedChannels = channelsFor(match.alert_channel);
+    for (const channel of wantedChannels) {
       const result = await attemptAlert(loadId, match, load, channel);
       if (result?.failed) {
         toRetry.push({ alertId: result.id, match, channel });
@@ -90,6 +95,16 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
     // could silently never run in production while looking fine locally.
     after(() => retryFailedAlerts(toRetry, load));
   }
+}
+
+// A location set to "email" or "sms" only never gets an attemptAlert call
+// for the other channel at all -- no LoadAlert row is created for it,
+// consistent with how a paused (active=false) location gets no rows on
+// either channel.
+function channelsFor(preference: AlertChannelPreference): AlertChannel[] {
+  if (preference === "email") return [AlertChannel.email];
+  if (preference === "sms") return [AlertChannel.sms];
+  return [AlertChannel.email, AlertChannel.sms];
 }
 
 // Inserts the LoadAlert row first (claiming the (load, location, channel)

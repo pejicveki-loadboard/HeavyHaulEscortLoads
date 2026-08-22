@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ESCORT_POSITIONS } from "@/lib/escort-positions";
 import { US_STATES } from "@/lib/us-states";
-import type { EscortPosition } from "@/generated/prisma/enums";
+import type { AlertChannelPreference, EscortPosition } from "@/generated/prisma/enums";
 
 export type SearchLocationValues = {
   label: string | null;
@@ -12,6 +12,7 @@ export type SearchLocationValues = {
   radiusMiles: number;
   escortPositions: EscortPosition[];
   active: boolean;
+  alertChannel: AlertChannelPreference;
 };
 
 export function SearchLocationForm({
@@ -35,6 +36,9 @@ export function SearchLocationForm({
     initialValues?.escortPositions ?? []
   );
   const [active, setActive] = useState(initialValues?.active ?? true);
+  const [alertChannel, setAlertChannel] = useState<AlertChannelPreference>(
+    initialValues?.alertChannel ?? "both"
+  );
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -61,6 +65,7 @@ export function SearchLocationForm({
           radiusMiles,
           escortPositions: positions,
           active,
+          alertChannel,
         }),
       });
       if (!res.ok) {
@@ -141,9 +146,21 @@ export function SearchLocationForm({
           ))}
         </div>
       </div>
+      <label className="flex flex-col gap-1 text-sm">
+        Alert channel
+        <select
+          value={alertChannel}
+          onChange={(e) => setAlertChannel(e.target.value as AlertChannelPreference)}
+          className="rounded border border-gray-300 px-3 py-2"
+        >
+          <option value="both">Email + SMS</option>
+          <option value="email">Email only</option>
+          <option value="sms">SMS only</option>
+        </select>
+      </label>
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
-        Active (uncheck to pause this location without deleting it)
+        Active (uncheck to mute/pause this location — no alerts fire, without deleting it)
       </label>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-2">
