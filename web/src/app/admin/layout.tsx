@@ -19,7 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Image
             src="/logo-horizontal.png"
             alt="HeavyHaul Escort Loads"
-            width={320}
+            width={232}
             height={80}
             className="h-20 w-auto"
             priority

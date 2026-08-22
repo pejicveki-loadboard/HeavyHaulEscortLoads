@@ -12,8 +12,8 @@ export default async function Home() {
       <Image
         src="/logo-horizontal.png"
         alt="HeavyHaul Escort Loads"
-        width={320}
-        height={80}
+        width={186}
+        height={64}
         className="h-16 w-auto"
         priority
       />

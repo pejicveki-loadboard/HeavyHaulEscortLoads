@@ -41,8 +41,8 @@ export default function LoginPage() {
       <Image
         src="/logo-horizontal.png"
         alt="HeavyHaul Escort Loads"
-        width={240}
-        height={60}
+        width={116}
+        height={40}
         className="h-10 w-auto"
         priority
       />
