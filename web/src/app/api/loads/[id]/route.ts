@@ -3,6 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { geocodeCityState } from "@/lib/geocode";
+import { matchAndAlertLoad } from "@/lib/load-matching";
 import { EscortPosition, LoadStatus } from "@/generated/prisma/enums";
 import { loadFieldsSchema } from "../route";
 
@@ -102,6 +103,22 @@ export async function PATCH(
       status: data.status,
     },
   });
+
+  // "Meaningful edit" per PHASE1_PLAN.md: origin moved, escort positions
+  // changed, or the load was reopened -- any of these can surface it to
+  // search locations that didn't match before. matchAndAlertLoad's
+  // insert-first LoadAlert dedup means re-running this is always safe
+  // (already-alerted channels are skipped), so no need to be clever here.
+  const originChanged = data.originCity !== undefined || data.originState !== undefined;
+  const escortPositionsChanged = data.escortPositions !== undefined;
+  const reopened = data.status === "open" && existing.status !== "open";
+  if (originChanged || escortPositionsChanged || reopened) {
+    try {
+      await matchAndAlertLoad(updated.id);
+    } catch (error) {
+      console.error(`Failed to match/alert load ${updated.id}:`, error);
+    }
+  }
 
   return NextResponse.json({ id: updated.id });
 }

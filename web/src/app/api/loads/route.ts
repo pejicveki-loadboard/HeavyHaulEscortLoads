@@ -3,6 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { geocodeCityState } from "@/lib/geocode";
+import { matchAndAlertLoad } from "@/lib/load-matching";
 import { EscortPosition, RateUnit } from "@/generated/prisma/enums";
 
 // Blank string -> null (explicitly clear the field); key absent entirely ->
@@ -110,6 +111,13 @@ export async function POST(request: Request) {
       rateUnit: data.rateUnit ?? null,
     },
   });
+
+  try {
+    await matchAndAlertLoad(load.id);
+  } catch (error) {
+    // A matching/alerting failure shouldn't fail the load post itself.
+    console.error(`Failed to match/alert load ${load.id}:`, error);
+  }
 
   return NextResponse.json({ id: load.id }, { status: 201 });
 }

@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/resend";
+import { verificationEmail } from "@/lib/email-templates";
+
+const VERIFICATION_TOKEN_TTL_HOURS = 24;
 
 const signupSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
@@ -20,11 +25,13 @@ export async function POST(request: Request) {
   const { email, password } = parsed.data;
 
   // TODO: this 409 lets an unauthenticated caller enumerate registered
-  // emails (unlike login, which returns a generic error either way). Fix
-  // properly once email verification exists: return the same generic
-  // response regardless of whether the email was taken, and gate account
-  // activation on the verification link instead. See ultrareview finding
-  // bug_003.
+  // emails (unlike login, which returns a generic error either way).
+  // Email verification (added 2026-08-21) gives this a real fix path now:
+  // return the same generic "check your email" response regardless of
+  // whether the email was taken, and gate account activation on the
+  // verification link instead -- that's a separate, deliberate change to
+  // the signup response shape that hasn't been made yet. See ultrareview
+  // finding bug_003.
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     return NextResponse.json(
@@ -34,9 +41,29 @@ export async function POST(request: Request) {
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const verificationTokenExpiresAt = new Date(
+    Date.now() + VERIFICATION_TOKEN_TTL_HOURS * 60 * 60 * 1000
+  );
+
   const user = await prisma.user.create({
-    data: { email, passwordHash },
+    data: {
+      email,
+      passwordHash,
+      emailVerificationToken: verificationToken,
+      emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
+    },
   });
+
+  const verifyUrl = `${process.env.APP_BASE_URL}/api/auth/verify-email?token=${verificationToken}`;
+  try {
+    const { subject, html } = verificationEmail(verifyUrl);
+    await sendEmail({ to: email, subject, html });
+  } catch (error) {
+    // Don't fail signup over a transactional-email hiccup -- the account
+    // still works unverified, and resend-verification covers a lost email.
+    console.error("Failed to send verification email:", error);
+  }
 
   return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
 }

@@ -41,6 +41,11 @@ enum EscortPosition {
   FOURTH_CAR
 }
 
+enum AlertChannel {
+  email
+  sms
+}
+
 // --- Models --------------------------------------------------------------
 
 // One login per email. No general role enum here on purpose — Load Manager
@@ -52,6 +57,14 @@ model User {
   passwordHash String   @map("password_hash")
   isAdmin      Boolean  @default(false) @map("is_admin")
   createdAt    DateTime @default(now()) @map("created_at")
+
+  // Added 2026-08-21 alongside the Resend integration for load alerts.
+  // Verification is additive, not a login gate -- an unverified user can
+  // still sign in and use the app; this just tracks/display status and
+  // backs the /api/auth/verify-email link.
+  emailVerifiedAt                 DateTime? @map("email_verified_at")
+  emailVerificationToken          String?   @unique @map("email_verification_token")
+  emailVerificationTokenExpiresAt DateTime? @map("email_verification_token_expires_at")
 
   loadManagerProfile LoadManagerProfile?
   pilotCarProfile    PilotCarProfile?
@@ -181,20 +194,23 @@ model Load {
   @@map("loads")
 }
 
-// A simple send log so a load never emails the same search location twice
-// (e.g., on repost or edit), and so the Load Manager dashboard's
-// "X notifications sent" stat has something to count. Scoped to
-// SearchLocation, not PilotCarProfile, so a profile's own locations are
-// never deduped against each other -- each is an independent search.
+// A simple send log so a load never emails/texts the same search location
+// twice on the same channel (e.g., on repost or edit), and so the Load
+// Manager dashboard's "X notifications sent" stat has something to count.
+// Scoped to SearchLocation, not PilotCarProfile, so a profile's own
+// locations are never deduped against each other -- each is an independent
+// search. channel added 2026-08-21: email and SMS are logged/deduped
+// separately, since Day 4 fires both per match.
 model LoadAlert {
-  id               String   @id @default(cuid())
-  loadId           String   @map("load_id")
-  searchLocationId String   @map("search_location_id")
-  sentAt           DateTime @default(now()) @map("sent_at")
+  id               String       @id @default(cuid())
+  loadId           String       @map("load_id")
+  searchLocationId String       @map("search_location_id")
+  channel          AlertChannel
+  sentAt           DateTime     @default(now()) @map("sent_at")
 
   load           Load           @relation(fields: [loadId], references: [id], onDelete: Cascade)
   searchLocation SearchLocation @relation(fields: [searchLocationId], references: [id], onDelete: Cascade)
 
-  @@unique([loadId, searchLocationId])
+  @@unique([loadId, searchLocationId, channel])
   @@map("load_alerts")
 }
