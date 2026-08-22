@@ -14,24 +14,31 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <main className="mx-auto max-w-4xl p-6">
-      <header className="mb-6 flex items-center justify-between border-b border-brand-border pb-4">
-        <div className="flex items-center gap-4">
-          <Image src="/icon-32.png" alt="" width={24} height={24} className="rounded" />
-          <nav className="flex gap-4 text-sm">
-            <Link href="/admin" className="text-brand-accent underline">
-              Summary
-            </Link>
-            <Link href="/admin/users" className="text-brand-accent underline">
-              Users
-            </Link>
-            <Link href="/admin/loads" className="text-brand-accent underline">
-              Loads
-            </Link>
-          </nav>
-        </div>
-        <Link href="/dashboard" className="text-sm text-brand-accent underline">
-          &larr; Back to dashboard
+      <header className="mb-6 flex flex-col items-start gap-4 border-b border-brand-border pb-4">
+        <Link href="/admin" className="shrink-0">
+          <Image
+            src="/logo-horizontal.png"
+            alt="HeavyHaul Escort Loads"
+            width={320}
+            height={80}
+            className="h-20 w-auto"
+            priority
+          />
         </Link>
+        <nav className="flex flex-wrap items-center gap-4 text-sm">
+          <Link href="/admin" className="text-brand-accent underline">
+            Summary
+          </Link>
+          <Link href="/admin/users" className="text-brand-accent underline">
+            Users
+          </Link>
+          <Link href="/admin/loads" className="text-brand-accent underline">
+            Loads
+          </Link>
+          <Link href="/dashboard" className="text-brand-accent underline">
+            &larr; Back to dashboard
+          </Link>
+        </nav>
       </header>
       {children}
     </main>
