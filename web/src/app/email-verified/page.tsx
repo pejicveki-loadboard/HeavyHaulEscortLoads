@@ -16,8 +16,8 @@ export default async function EmailVerifiedPage({
 
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center gap-4 p-6 text-center">
-      <h1 className="text-2xl font-semibold">{message}</h1>
-      <Link href="/dashboard" className="underline">
+      <h1 className="text-2xl font-semibold text-brand-text">{message}</h1>
+      <Link href="/dashboard" className="text-brand-accent underline">
         Go to dashboard
       </Link>
     </main>

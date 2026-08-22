@@ -18,8 +18,8 @@ export default async function OnboardingPage() {
 
   return (
     <main className="mx-auto max-w-lg p-6">
-      <h1 className="mb-2 text-2xl font-semibold">What do you need?</h1>
-      <p className="mb-6 text-gray-600">
+      <h1 className="mb-2 text-2xl font-semibold text-brand-text">What do you need?</h1>
+      <p className="mb-6 text-brand-muted">
         You can add the other one later from your account settings.
       </p>
       <OnboardingForm

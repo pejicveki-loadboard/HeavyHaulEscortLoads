@@ -16,10 +16,10 @@ export default async function EditLoadManagerPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <Link href="/dashboard/load-manager" className="text-sm underline">
+        <Link href="/dashboard/load-manager" className="text-sm text-brand-accent underline">
           &larr; Back to dashboard
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold">Edit Load Manager profile</h1>
+        <h1 className="mt-2 text-2xl font-semibold text-brand-text">Edit Load Manager profile</h1>
       </div>
       <LoadManagerProfileForm
         mode="edit"

@@ -65,7 +65,9 @@ export default async function AdminUsersPage({
   return (
     <div className="flex flex-col gap-10">
       <section>
-        <h1 className="mb-3 text-2xl font-semibold">Load Manager profiles ({lmTotal})</h1>
+        <h1 className="mb-3 text-2xl font-semibold text-brand-text">
+          Load Manager profiles ({lmTotal})
+        </h1>
         <form method="get" className="mb-3">
           <input type="hidden" name="pcQ" value={pc.q} />
           <input
@@ -73,13 +75,13 @@ export default async function AdminUsersPage({
             name="lmQ"
             defaultValue={lm.q}
             placeholder="Search company or email..."
-            className="rounded border border-gray-300 px-3 py-1.5 text-sm"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-1.5 text-sm text-brand-text"
           />
         </form>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded border border-brand-border bg-brand-panel">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-300 text-left">
+              <tr className="border-b border-brand-border text-left text-brand-text">
                 <th className="p-2">
                   <Link href={sortLink(basePath, sp, "lm", "companyName", lm)}>Company</Link>
                 </th>
@@ -92,7 +94,7 @@ export default async function AdminUsersPage({
             </thead>
             <tbody>
               {lmRows.map((row) => (
-                <tr key={row.id} className="border-b border-gray-100">
+                <tr key={row.id} className="border-b border-brand-border text-brand-text">
                   <td className="p-2">{row.companyName}</td>
                   <td className="p-2">{row.user.email}</td>
                   <td className="p-2">{row.phone}</td>
@@ -101,7 +103,7 @@ export default async function AdminUsersPage({
               ))}
               {lmRows.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="p-2 text-gray-600">
+                  <td colSpan={4} className="p-2 text-brand-muted">
                     No matching Load Manager profiles.
                   </td>
                 </tr>
@@ -109,17 +111,23 @@ export default async function AdminUsersPage({
             </tbody>
           </table>
         </div>
-        <div className="mt-2 flex gap-3 text-sm">
+        <div className="mt-2 flex gap-3 text-sm text-brand-muted">
           <span>
             Page {lm.page} of {lmPages}
           </span>
           {lm.page > 1 && (
-            <Link href={pageLink(basePath, sp, "lm", lm.page - 1)} className="underline">
+            <Link
+              href={pageLink(basePath, sp, "lm", lm.page - 1)}
+              className="text-brand-accent underline"
+            >
               Previous
             </Link>
           )}
           {lm.page < lmPages && (
-            <Link href={pageLink(basePath, sp, "lm", lm.page + 1)} className="underline">
+            <Link
+              href={pageLink(basePath, sp, "lm", lm.page + 1)}
+              className="text-brand-accent underline"
+            >
               Next
             </Link>
           )}
@@ -127,7 +135,9 @@ export default async function AdminUsersPage({
       </section>
 
       <section>
-        <h1 className="mb-3 text-2xl font-semibold">Pilot Car profiles ({pcTotal})</h1>
+        <h1 className="mb-3 text-2xl font-semibold text-brand-text">
+          Pilot Car profiles ({pcTotal})
+        </h1>
         <form method="get" className="mb-3">
           <input type="hidden" name="lmQ" value={lm.q} />
           <input
@@ -135,13 +145,13 @@ export default async function AdminUsersPage({
             name="pcQ"
             defaultValue={pc.q}
             placeholder="Search company or email..."
-            className="rounded border border-gray-300 px-3 py-1.5 text-sm"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-1.5 text-sm text-brand-text"
           />
         </form>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded border border-brand-border bg-brand-panel">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-300 text-left">
+              <tr className="border-b border-brand-border text-left text-brand-text">
                 <th className="p-2">
                   <Link href={sortLink(basePath, sp, "pc", "companyName", pc)}>Company</Link>
                 </th>
@@ -160,7 +170,7 @@ export default async function AdminUsersPage({
             </thead>
             <tbody>
               {pcRows.map((row) => (
-                <tr key={row.id} className="border-b border-gray-100">
+                <tr key={row.id} className="border-b border-brand-border text-brand-text">
                   <td className="p-2">{row.companyName}</td>
                   <td className="p-2">{row.user.email}</td>
                   <td className="p-2">{row.phone}</td>
@@ -173,7 +183,7 @@ export default async function AdminUsersPage({
               ))}
               {pcRows.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="p-2 text-gray-600">
+                  <td colSpan={8} className="p-2 text-brand-muted">
                     No matching Pilot Car profiles.
                   </td>
                 </tr>
@@ -181,17 +191,23 @@ export default async function AdminUsersPage({
             </tbody>
           </table>
         </div>
-        <div className="mt-2 flex gap-3 text-sm">
+        <div className="mt-2 flex gap-3 text-sm text-brand-muted">
           <span>
             Page {pc.page} of {pcPages}
           </span>
           {pc.page > 1 && (
-            <Link href={pageLink(basePath, sp, "pc", pc.page - 1)} className="underline">
+            <Link
+              href={pageLink(basePath, sp, "pc", pc.page - 1)}
+              className="text-brand-accent underline"
+            >
               Previous
             </Link>
           )}
           {pc.page < pcPages && (
-            <Link href={pageLink(basePath, sp, "pc", pc.page + 1)} className="underline">
+            <Link
+              href={pageLink(basePath, sp, "pc", pc.page + 1)}
+              className="text-brand-accent underline"
+            >
               Next
             </Link>
           )}

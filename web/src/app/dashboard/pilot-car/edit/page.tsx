@@ -16,10 +16,10 @@ export default async function EditPilotCarPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <Link href="/dashboard/pilot-car" className="text-sm underline">
+        <Link href="/dashboard/pilot-car" className="text-sm text-brand-accent underline">
           &larr; Back to dashboard
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold">Edit Pilot Car profile</h1>
+        <h1 className="mt-2 text-2xl font-semibold text-brand-text">Edit Pilot Car profile</h1>
       </div>
       <PilotCarProfileForm
         mode="edit"

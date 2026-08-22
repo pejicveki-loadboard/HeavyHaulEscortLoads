@@ -16,8 +16,8 @@ export function VerifyEmailBanner() {
   }
 
   return (
-    <div className="mb-4 flex items-center justify-between gap-3 rounded border border-amber-300 bg-amber-50 p-3 text-sm">
-      <span className="text-amber-900">
+    <div className="mb-4 flex items-center justify-between gap-3 rounded border border-brand-accent bg-brand-accent/10 p-3 text-sm">
+      <span className="text-brand-accent">
         {status === "sent"
           ? "Verification email sent — check your inbox."
           : "Please verify your email address."}
@@ -26,7 +26,7 @@ export function VerifyEmailBanner() {
         <button
           onClick={resend}
           disabled={status === "sending"}
-          className="shrink-0 rounded border border-amber-400 px-3 py-1 text-amber-900 disabled:opacity-50"
+          className="shrink-0 rounded border border-brand-accent px-3 py-1 text-brand-accent disabled:opacity-50"
         >
           {status === "sending" ? "Sending..." : status === "error" ? "Try again" : "Resend email"}
         </button>

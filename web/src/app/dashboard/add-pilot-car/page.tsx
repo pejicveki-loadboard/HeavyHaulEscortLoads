@@ -15,8 +15,8 @@ export default async function AddPilotCarPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-semibold">Add Pilot Car access</h1>
-        <p className="text-gray-600">Starts a 30-day free trial.</p>
+        <h1 className="text-2xl font-semibold text-brand-text">Add Pilot Car access</h1>
+        <p className="text-brand-muted">Starts a 30-day free trial.</p>
       </div>
       <PilotCarProfileForm redirectTo="/dashboard/pilot-car" />
     </div>

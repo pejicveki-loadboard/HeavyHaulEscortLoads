@@ -35,7 +35,7 @@ export function OnboardingForm({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         {!hasLoadManagerProfile && (
-          <label className="flex items-center gap-2 rounded border border-gray-300 p-3">
+          <label className="flex items-center gap-2 rounded border border-brand-border bg-brand-panel p-3 text-brand-text">
             <input
               type="checkbox"
               checked={wantsLoadManager}
@@ -47,7 +47,7 @@ export function OnboardingForm({
           </label>
         )}
         {!hasPilotCarProfile && (
-          <label className="flex items-center gap-2 rounded border border-gray-300 p-3">
+          <label className="flex items-center gap-2 rounded border border-brand-border bg-brand-panel p-3 text-brand-text">
             <input
               type="checkbox"
               checked={wantsPilotCar}

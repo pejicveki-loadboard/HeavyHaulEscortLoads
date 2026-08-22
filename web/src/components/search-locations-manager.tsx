@@ -54,7 +54,7 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
   return (
     <div className="flex flex-col gap-4">
       {locations.length === 0 && (
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-brand-muted">
           No search locations yet. Add one to start receiving load alerts.
         </p>
       )}
@@ -73,18 +73,18 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
             onCancel={() => setEditingId(null)}
           />
         ) : (
-          <div key={location.id} className="rounded border border-gray-300 p-4">
+          <div key={location.id} className="rounded border border-brand-border bg-brand-panel p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-semibold">
+                <p className="font-semibold text-brand-text">
                   {location.label || `${location.city}, ${location.state}`}
                   {!location.active && (
-                    <span className="ml-2 rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700">
+                    <span className="ml-2 rounded bg-brand-border px-2 py-0.5 text-xs text-brand-muted">
                       Paused
                     </span>
                   )}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-brand-muted">
                   {location.city}, {location.state} · {location.radiusMiles} mi ·{" "}
                   {positionLabels(location.escortPositions) || "no positions selected"} ·{" "}
                   {CHANNEL_LABELS[location.alertChannel]}
@@ -93,21 +93,21 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
               <div className="flex shrink-0 gap-2">
                 <button
                   onClick={() => setEditingId(location.id)}
-                  className="rounded border border-gray-300 px-3 py-1.5 text-sm"
+                  className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => togglePause(location)}
                   disabled={busyId === location.id}
-                  className="rounded border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
+                  className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text disabled:opacity-50"
                 >
                   {location.active ? "Pause" : "Resume"}
                 </button>
                 <button
                   onClick={() => handleDelete(location.id)}
                   disabled={busyId === location.id}
-                  className="rounded border border-red-300 px-3 py-1.5 text-sm text-red-700 disabled:opacity-50"
+                  className="rounded border border-red-800 px-3 py-1.5 text-sm text-red-400 disabled:opacity-50"
                 >
                   Remove
                 </button>
@@ -129,7 +129,7 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
       ) : (
         <button
           onClick={() => setShowAddForm(true)}
-          className="self-start rounded border border-gray-300 px-4 py-2 text-sm"
+          className="self-start rounded border border-brand-border px-4 py-2 text-sm text-brand-text"
         >
           + Add search location
         </button>

@@ -38,21 +38,21 @@ export default async function LoadManagerDashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Load Manager Dashboard</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-semibold text-brand-text">Load Manager Dashboard</h1>
+        <p className="text-brand-muted">
           {profile.companyName} ·{" "}
-          <Link href="/dashboard/load-manager/edit" className="underline">
+          <Link href="/dashboard/load-manager/edit" className="text-brand-accent underline">
             Edit profile
           </Link>
         </p>
       </div>
 
-      <section className="rounded border border-gray-300 p-4">
+      <section className="rounded border border-brand-border bg-brand-panel p-4">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="font-semibold">Your loads</h2>
+          <h2 className="font-semibold text-brand-text">Your loads</h2>
           <Link
             href="/dashboard/load-manager/post"
-            className="rounded bg-black px-3 py-1.5 text-sm text-white"
+            className="rounded bg-brand-accent px-3 py-1.5 text-sm text-brand-accent-text"
           >
             + Post a load
           </Link>
@@ -60,9 +60,9 @@ export default async function LoadManagerDashboardPage() {
         <LoadList loads={loadRows} />
       </section>
 
-      <section className="rounded border border-gray-300 p-4">
-        <h2 className="mb-2 font-semibold">Notifications sent</h2>
-        <p className="text-sm text-gray-600">{alertsSentCount} pilot car alerts sent so far.</p>
+      <section className="rounded border border-brand-border bg-brand-panel p-4">
+        <h2 className="mb-2 font-semibold text-brand-text">Notifications sent</h2>
+        <p className="text-sm text-brand-muted">{alertsSentCount} pilot car alerts sent so far.</p>
       </section>
     </div>
   );

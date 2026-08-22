@@ -62,21 +62,21 @@ export function PilotCarProfileForm({
 
   if (created) {
     return (
-      <p className="rounded border border-green-300 bg-green-50 p-3 text-sm text-green-800">
+      <p className="rounded border border-green-800 bg-green-950 p-3 text-sm text-green-400">
         Pilot Car profile created — your 30-day trial has started.
       </p>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-gray-300 p-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-brand-border bg-brand-panel p-4">
       <label className="flex flex-col gap-1 text-sm">
         Company name
         <input
           required
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
       <label className="flex flex-col gap-1 text-sm">
@@ -85,15 +85,15 @@ export function PilotCarProfileForm({
           required
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {saved && <p className="text-sm text-green-700">Saved.</p>}
+      {error && <p className="text-sm text-red-400">{error}</p>}
+      {saved && <p className="text-sm text-green-400">Saved.</p>}
       <button
         type="submit"
         disabled={submitting}
-        className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+        className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50"
       >
         {submitting ? "Saving..." : mode === "edit" ? "Save changes" : "Create Pilot Car profile"}
       </button>

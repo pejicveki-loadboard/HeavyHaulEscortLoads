@@ -93,7 +93,7 @@ export function LoadForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-gray-300 p-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-brand-border bg-brand-panel p-4">
       <div className="flex gap-3">
         <label className="flex flex-1 flex-col gap-1 text-sm">
           Origin city
@@ -101,7 +101,7 @@ export function LoadForm({
             required
             value={originCity}
             onChange={(e) => setOriginCity(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
         <label className="flex w-24 flex-col gap-1 text-sm">
@@ -110,7 +110,7 @@ export function LoadForm({
             required
             value={originState}
             onChange={(e) => setOriginState(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           >
             <option value="" disabled>
               --
@@ -130,7 +130,7 @@ export function LoadForm({
             required
             value={destinationCity}
             onChange={(e) => setDestinationCity(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
         <label className="flex w-24 flex-col gap-1 text-sm">
@@ -139,7 +139,7 @@ export function LoadForm({
             required
             value={destinationState}
             onChange={(e) => setDestinationState(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           >
             <option value="" disabled>
               --
@@ -159,7 +159,7 @@ export function LoadForm({
           required
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
       <div className="flex flex-col gap-1 text-sm">
@@ -186,7 +186,7 @@ export function LoadForm({
             step="0.1"
             value={widthFt}
             onChange={(e) => setWidthFt(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
         <label className="flex flex-1 flex-col gap-1 text-sm">
@@ -197,7 +197,7 @@ export function LoadForm({
             step="0.1"
             value={heightFt}
             onChange={(e) => setHeightFt(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
         <label className="flex flex-1 flex-col gap-1 text-sm">
@@ -208,7 +208,7 @@ export function LoadForm({
             step="0.1"
             value={lengthFt}
             onChange={(e) => setLengthFt(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
       </div>
@@ -219,7 +219,7 @@ export function LoadForm({
           min={0}
           value={weightLbs}
           onChange={(e) => setWeightLbs(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
       <div className="flex gap-3">
@@ -231,7 +231,7 @@ export function LoadForm({
             step="0.01"
             value={rate}
             onChange={(e) => setRate(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
         <label className="flex w-40 flex-col gap-1 text-sm">
@@ -239,7 +239,7 @@ export function LoadForm({
           <select
             value={rateUnit}
             onChange={(e) => setRateUnit(e.target.value as RateUnit | "")}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           >
             <option value="">--</option>
             <option value="flat">Flat</option>
@@ -247,11 +247,11 @@ export function LoadForm({
           </select>
         </label>
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-400">{error}</p>}
       <button
         type="submit"
         disabled={submitting}
-        className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+        className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50"
       >
         {submitting ? "Saving..." : mode === "edit" ? "Save changes" : "Post load"}
       </button>

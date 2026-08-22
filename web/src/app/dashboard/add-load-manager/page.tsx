@@ -15,8 +15,8 @@ export default async function AddLoadManagerPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-semibold">Add Load Manager access</h1>
-        <p className="text-gray-600">Free, no subscription required.</p>
+        <h1 className="text-2xl font-semibold text-brand-text">Add Load Manager access</h1>
+        <p className="text-brand-muted">Free, no subscription required.</p>
       </div>
       <LoadManagerProfileForm redirectTo="/dashboard/load-manager" />
     </div>

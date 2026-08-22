@@ -52,20 +52,20 @@ export default async function AdminLoadsPage({
 
   return (
     <div>
-      <h1 className="mb-3 text-2xl font-semibold">Loads ({total})</h1>
+      <h1 className="mb-3 text-2xl font-semibold text-brand-text">Loads ({total})</h1>
       <form method="get" className="mb-3">
         <input
           type="text"
           name="lQ"
           defaultValue={t.q}
           placeholder="Search origin, destination, or company..."
-          className="rounded border border-gray-300 px-3 py-1.5 text-sm"
+          className="rounded border border-brand-border bg-brand-panel px-3 py-1.5 text-sm text-brand-text"
         />
       </form>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded border border-brand-border bg-brand-panel">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-300 text-left">
+            <tr className="border-b border-brand-border text-left text-brand-text">
               <th className="p-2">Origin &rarr; Destination</th>
               <th className="p-2">
                 <Link href={sortLink(basePath, sp, "l", "date", t)}>Date</Link>
@@ -82,7 +82,7 @@ export default async function AdminLoadsPage({
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} className="border-b border-gray-100">
+              <tr key={row.id} className="border-b border-brand-border text-brand-text">
                 <td className="p-2">
                   {row.originCity}, {row.originState} &rarr; {row.destinationCity},{" "}
                   {row.destinationState}
@@ -96,7 +96,7 @@ export default async function AdminLoadsPage({
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={6} className="p-2 text-gray-600">
+                <td colSpan={6} className="p-2 text-brand-muted">
                   No matching loads.
                 </td>
               </tr>
@@ -104,17 +104,23 @@ export default async function AdminLoadsPage({
           </tbody>
         </table>
       </div>
-      <div className="mt-2 flex gap-3 text-sm">
+      <div className="mt-2 flex gap-3 text-sm text-brand-muted">
         <span>
           Page {t.page} of {totalPages}
         </span>
         {t.page > 1 && (
-          <Link href={pageLink(basePath, sp, "l", t.page - 1)} className="underline">
+          <Link
+            href={pageLink(basePath, sp, "l", t.page - 1)}
+            className="text-brand-accent underline"
+          >
             Previous
           </Link>
         )}
         {t.page < totalPages && (
-          <Link href={pageLink(basePath, sp, "l", t.page + 1)} className="underline">
+          <Link
+            href={pageLink(basePath, sp, "l", t.page + 1)}
+            className="text-brand-accent underline"
+          >
             Next
           </Link>
         )}

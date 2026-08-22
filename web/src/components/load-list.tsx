@@ -57,7 +57,7 @@ export function LoadList({ loads }: { loads: LoadRow[] }) {
 
   if (loads.length === 0) {
     return (
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-brand-muted">
         You haven&apos;t posted any loads yet.
       </p>
     );
@@ -66,24 +66,24 @@ export function LoadList({ loads }: { loads: LoadRow[] }) {
   return (
     <ul className="flex flex-col gap-3">
       {loads.map((load) => (
-        <li key={load.id} className="rounded border border-gray-300 p-4">
+        <li key={load.id} className="rounded border border-brand-border bg-brand-panel p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="font-semibold">
+              <p className="font-semibold text-brand-text">
                 {load.originCity}, {load.originState} &rarr; {load.destinationCity},{" "}
                 {load.destinationState}
                 {load.status === "covered" && (
-                  <span className="ml-2 rounded bg-green-200 px-2 py-0.5 text-xs text-green-800">
+                  <span className="ml-2 rounded bg-green-900 px-2 py-0.5 text-xs text-green-300">
                     Covered
                   </span>
                 )}
                 {load.status === "expired" && (
-                  <span className="ml-2 rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700">
+                  <span className="ml-2 rounded bg-brand-border px-2 py-0.5 text-xs text-brand-muted">
                     Expired
                   </span>
                 )}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-brand-muted">
                 {new Date(load.date).toLocaleDateString()} · {positionLabels(load.escortPositions)}
                 {load.weightLbs ? ` · ${load.weightLbs.toLocaleString()} lbs` : ""}
                 {load.rate
@@ -96,21 +96,21 @@ export function LoadList({ loads }: { loads: LoadRow[] }) {
             <div className="flex shrink-0 gap-2">
               <Link
                 href={`/dashboard/load-manager/loads/${load.id}/edit`}
-                className="rounded border border-gray-300 px-3 py-1.5 text-sm"
+                className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text"
               >
                 Edit
               </Link>
               <button
                 onClick={() => toggleCovered(load)}
                 disabled={busyId === load.id}
-                className="rounded border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
+                className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text disabled:opacity-50"
               >
                 {load.status === "open" ? "Mark covered" : "Reopen"}
               </button>
               <button
                 onClick={() => handleDelete(load.id)}
                 disabled={busyId === load.id}
-                className="rounded border border-red-300 px-3 py-1.5 text-sm text-red-700 disabled:opacity-50"
+                className="rounded border border-red-800 px-3 py-1.5 text-sm text-red-400 disabled:opacity-50"
               >
                 Delete
               </button>

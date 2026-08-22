@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
+/* HeavyHaul Escort Loads brand kit v1 (2026-08-19) -- permanently dark,
+   same palette as the marketing landing page (index.html), not a
+   prefers-color-scheme toggle. See /brand-kit.md in the kit zip for the
+   source spec. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-brand-bg: #0b0f14;
+  --color-brand-panel: #121821;
+  --color-brand-border: #22303c;
+  --color-brand-accent: #f5a623;
+  --color-brand-accent-deep: #d3830c;
+  /* Dark text pairs with the accent for contrast (buttons) -- matches the
+     landing page's button color exactly, not in the brand-kit doc itself. */
+  --color-brand-accent-text: #1a1204;
+  --color-brand-text: #eef2f6;
+  --color-brand-muted: #9aa7b4;
+  --color-brand-text-on-light: #33414d;
+
+  --font-heading: "Liberation Sans", Arial, Helvetica, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-brand-bg: var(--color-brand-bg);
+  --color-brand-panel: var(--color-brand-panel);
+  --color-brand-border: var(--color-brand-border);
+  --color-brand-accent: var(--color-brand-accent);
+  --color-brand-accent-deep: var(--color-brand-accent-deep);
+  --color-brand-accent-text: var(--color-brand-accent-text);
+  --color-brand-text: var(--color-brand-text);
+  --color-brand-muted: var(--color-brand-muted);
+  --color-brand-text-on-light: var(--color-brand-text-on-light);
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-brand-bg);
+  color: var(--color-brand-text);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
 }

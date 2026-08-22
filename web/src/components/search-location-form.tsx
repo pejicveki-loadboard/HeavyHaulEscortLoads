@@ -80,14 +80,14 @@ export function SearchLocationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-gray-300 p-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-brand-border bg-brand-panel p-4">
       <label className="flex flex-col gap-1 text-sm">
         Label (optional)
         <input
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           placeholder="e.g. Truck 2 — Texas route"
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
       <div className="flex gap-3">
@@ -97,7 +97,7 @@ export function SearchLocationForm({
             required
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
         <label className="flex w-24 flex-col gap-1 text-sm">
@@ -106,7 +106,7 @@ export function SearchLocationForm({
             required
             value={state}
             onChange={(e) => setState(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           >
             <option value="" disabled>
               --
@@ -128,7 +128,7 @@ export function SearchLocationForm({
           required
           value={radiusMiles}
           onChange={(e) => setRadiusMiles(e.target.value)}
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
       <div className="flex flex-col gap-1 text-sm">
@@ -151,7 +151,7 @@ export function SearchLocationForm({
         <select
           value={alertChannel}
           onChange={(e) => setAlertChannel(e.target.value as AlertChannelPreference)}
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         >
           <option value="both">Email + SMS</option>
           <option value="email">Email only</option>
@@ -162,12 +162,12 @@ export function SearchLocationForm({
         <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
         Active (uncheck to mute/pause this location — no alerts fire, without deleting it)
       </label>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-400">{error}</p>}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+          className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50"
         >
           {submitting ? "Saving..." : mode === "edit" ? "Save changes" : "Add location"}
         </button>
@@ -175,7 +175,7 @@ export function SearchLocationForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded border border-gray-300 px-4 py-2"
+            className="rounded border border-brand-border px-4 py-2 text-brand-text"
           >
             Cancel
           </button>

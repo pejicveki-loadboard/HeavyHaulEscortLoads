@@ -25,17 +25,17 @@ export default async function PilotCarDashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Pilot Car Dashboard</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-semibold text-brand-text">Pilot Car Dashboard</h1>
+        <p className="text-brand-muted">
           {profile.companyName} ·{" "}
-          <Link href="/dashboard/pilot-car/edit" className="underline">
+          <Link href="/dashboard/pilot-car/edit" className="text-brand-accent underline">
             Edit profile
           </Link>
         </p>
       </div>
 
-      <section className="rounded border border-amber-300 bg-amber-50 p-4">
-        <p className="font-semibold text-amber-900">
+      <section className="rounded border border-brand-accent bg-brand-accent/10 p-4">
+        <p className="font-semibold text-brand-accent">
           {formatSubscriptionStatus(
             profile.subscriptionStatus,
             profile.trialEndsAt,
@@ -44,20 +44,20 @@ export default async function PilotCarDashboardPage() {
         </p>
       </section>
 
-      <section className="rounded border border-gray-300 p-4">
+      <section className="rounded border border-brand-border bg-brand-panel p-4">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="font-semibold">Search locations</h2>
-          <Link href="/dashboard/pilot-car/search-locations" className="text-sm underline">
+          <h2 className="font-semibold text-brand-text">Search locations</h2>
+          <Link href="/dashboard/pilot-car/search-locations" className="text-sm text-brand-accent underline">
             Manage
           </Link>
         </div>
         {searchLocations.length === 0 ? (
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-brand-muted">
             You haven&apos;t added a search location yet — add one to start receiving load
             alerts.
           </p>
         ) : (
-          <ul className="flex flex-col gap-1 text-sm text-gray-600">
+          <ul className="flex flex-col gap-1 text-sm text-brand-muted">
             <li>
               {activeCount} active of {searchLocations.length} total
             </li>
@@ -75,8 +75,8 @@ export default async function PilotCarDashboardPage() {
         )}
       </section>
 
-      <section className="rounded border border-gray-300 p-4">
-        <h2 className="mb-2 font-semibold">Load board</h2>
+      <section className="rounded border border-brand-border bg-brand-panel p-4">
+        <h2 className="mb-2 font-semibold text-brand-text">Load board</h2>
         {hasLoadBoardAccess(profile) ? (
           <BrowseLoadsPanel
             savedLocations={searchLocations
@@ -91,7 +91,7 @@ export default async function PilotCarDashboardPage() {
               }))}
           />
         ) : (
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-brand-muted">
             Your trial has ended — subscribe to keep browsing loads. (Billing isn&apos;t wired up
             yet; check back soon.)
           </p>

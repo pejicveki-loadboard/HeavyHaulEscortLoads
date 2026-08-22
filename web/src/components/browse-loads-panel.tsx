@@ -101,14 +101,14 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
 
   return (
     <div className="flex flex-col gap-4">
-      <form onSubmit={handleSearch} className="flex flex-col gap-3 rounded border border-gray-300 p-4">
+      <form onSubmit={handleSearch} className="flex flex-col gap-3 rounded border border-brand-border bg-brand-panel p-4">
         {savedLocations.length > 0 && (
           <label className="flex flex-col gap-1 text-sm">
             Use a saved search location
             <select
               onChange={(e) => e.target.value && applySavedLocation(e.target.value)}
               defaultValue=""
-              className="rounded border border-gray-300 px-3 py-2"
+              className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
             >
               <option value="">-- pick one to pre-fill, or search ad-hoc below --</option>
               {savedLocations.map((loc) => (
@@ -127,7 +127,7 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
               required
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="rounded border border-gray-300 px-3 py-2"
+              className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
             />
           </label>
           <label className="flex w-24 flex-col gap-1 text-sm">
@@ -136,7 +136,7 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
               required
               value={state}
               onChange={(e) => setState(e.target.value)}
-              className="rounded border border-gray-300 px-3 py-2"
+              className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
             >
               <option value="" disabled>
                 --
@@ -157,7 +157,7 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
               required
               value={radiusMiles}
               onChange={(e) => setRadiusMiles(e.target.value)}
-              className="rounded border border-gray-300 px-3 py-2"
+              className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
             />
           </label>
         </div>
@@ -185,7 +185,7 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="rounded border border-gray-300 px-3 py-2"
+              className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
             />
           </label>
           <label className="flex flex-1 flex-col gap-1 text-sm">
@@ -194,16 +194,16 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="rounded border border-gray-300 px-3 py-2"
+              className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
             />
           </label>
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
         <button
           type="submit"
           disabled={loading}
-          className="self-start rounded bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
+          className="self-start rounded bg-brand-accent px-4 py-2 text-sm text-brand-accent-text disabled:opacity-50"
         >
           {loading ? "Searching..." : "Search"}
         </button>
@@ -212,18 +212,18 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
       {results && (
         <div className="flex flex-col gap-3">
           {results.length === 0 && (
-            <p className="text-sm text-gray-600">No open loads match that search.</p>
+            <p className="text-sm text-brand-muted">No open loads match that search.</p>
           )}
           {results.map((load) => (
-            <div key={load.id} className="rounded border border-gray-300 p-4">
-              <p className="font-semibold">
+            <div key={load.id} className="rounded border border-brand-border bg-brand-panel p-4">
+              <p className="font-semibold text-brand-text">
                 {load.originCity}, {load.originState} &rarr; {load.destinationCity},{" "}
                 {load.destinationState}
-                <span className="ml-2 text-sm font-normal text-gray-600">
+                <span className="ml-2 text-sm font-normal text-brand-muted">
                   {load.distanceMiles} mi away
                 </span>
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-brand-muted">
                 {new Date(load.date).toLocaleDateString()} · {positionLabels(load.escortPositions)}
                 {load.weightLbs ? ` · ${load.weightLbs.toLocaleString()} lbs` : ""}
                 {load.rate
@@ -235,12 +235,14 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
               </p>
               <div className="mt-2">
                 {revealed[load.id] ? (
-                  <span className="text-sm font-semibold">Contact: {revealed[load.id]}</span>
+                  <span className="text-sm font-semibold text-brand-text">
+                    Contact: {revealed[load.id]}
+                  </span>
                 ) : (
                   <button
                     onClick={() => revealContact(load.id)}
                     disabled={revealingId === load.id}
-                    className="rounded border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-50"
+                    className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text disabled:opacity-50"
                   >
                     {revealingId === load.id ? "Revealing..." : "Reveal contact"}
                   </button>

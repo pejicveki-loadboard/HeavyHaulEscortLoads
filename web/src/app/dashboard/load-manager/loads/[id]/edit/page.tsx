@@ -25,10 +25,10 @@ export default async function EditLoadPage({
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <Link href="/dashboard/load-manager" className="text-sm underline">
+        <Link href="/dashboard/load-manager" className="text-sm text-brand-accent underline">
           &larr; Back to dashboard
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold">Edit load</h1>
+        <h1 className="mt-2 text-2xl font-semibold text-brand-text">Edit load</h1>
       </div>
       <LoadForm
         mode="edit"

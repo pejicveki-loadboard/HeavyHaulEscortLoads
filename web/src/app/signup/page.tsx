@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function SignupPage() {
@@ -57,7 +58,15 @@ export default function SignupPage() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-6 p-6">
-      <h1 className="text-2xl font-semibold">Create your account</h1>
+      <Image
+        src="/logo-horizontal.png"
+        alt="HeavyHaul Escort Loads"
+        width={240}
+        height={60}
+        className="h-10 w-auto"
+        priority
+      />
+      <h1 className="text-2xl font-semibold text-brand-text">Create your account</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">
           Email
@@ -66,7 +75,7 @@ export default function SignupPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -77,7 +86,7 @@ export default function SignupPage() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
@@ -88,21 +97,21 @@ export default function SignupPage() {
             minLength={8}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+          className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50"
         >
           {submitting ? "Creating account..." : "Sign up"}
         </button>
       </form>
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-brand-muted">
         Already have an account?{" "}
-        <Link href="/login" className="underline">
+        <Link href="/login" className="text-brand-accent underline">
           Log in
         </Link>
       </p>

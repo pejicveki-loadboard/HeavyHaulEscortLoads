@@ -24,26 +24,26 @@ export default async function AdminSummaryPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-semibold">Summary</h1>
+      <h1 className="text-2xl font-semibold text-brand-text">Summary</h1>
 
       <div className="grid grid-cols-3 gap-4">
-        <div className="rounded border border-gray-300 p-4">
-          <p className="text-sm text-gray-600">Load Manager signups</p>
-          <p className="text-2xl font-semibold">{loadManagerCount}</p>
+        <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <p className="text-sm text-brand-muted">Load Manager signups</p>
+          <p className="text-2xl font-semibold text-brand-text">{loadManagerCount}</p>
         </div>
-        <div className="rounded border border-gray-300 p-4">
-          <p className="text-sm text-gray-600">Pilot Car signups</p>
-          <p className="text-2xl font-semibold">{pilotCarCount}</p>
+        <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <p className="text-sm text-brand-muted">Pilot Car signups</p>
+          <p className="text-2xl font-semibold text-brand-text">{pilotCarCount}</p>
         </div>
-        <div className="rounded border border-gray-300 p-4">
-          <p className="text-sm text-gray-600">Loads posted</p>
-          <p className="text-2xl font-semibold">{loadCount}</p>
+        <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <p className="text-sm text-brand-muted">Loads posted</p>
+          <p className="text-2xl font-semibold text-brand-text">{loadCount}</p>
         </div>
       </div>
 
-      <div className="rounded border border-gray-300 p-4">
-        <h2 className="mb-2 font-semibold">Pilot Car profiles by subscription status</h2>
-        <p className="mb-3 text-sm text-gray-600">
+      <div className="rounded border border-brand-border bg-brand-panel p-4">
+        <h2 className="mb-2 font-semibold text-brand-text">Pilot Car profiles by subscription status</h2>
+        <p className="mb-3 text-sm text-brand-muted">
           Computed effective status (accounts for trials that expired but haven&apos;t been
           flipped in the DB yet), not the raw column.
         </p>
