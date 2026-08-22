@@ -46,6 +46,11 @@ enum AlertChannel {
   sms
 }
 
+enum AlertSendStatus {
+  sent
+  failed
+}
+
 // --- Models --------------------------------------------------------------
 
 // One login per email. No general role enum here on purpose — Load Manager
@@ -201,12 +206,22 @@ model Load {
 // locations are never deduped against each other -- each is an independent
 // search. channel added 2026-08-21: email and SMS are logged/deduped
 // separately, since Day 4 fires both per match.
+//
+// status/attempts added 2026-08-22: the row is inserted (claiming the
+// slot, status defaults to failed) before the send is attempted, so a
+// concurrent re-trigger can never double-claim it; status flips to `sent`
+// only on confirmed success. attempts is the real, queryable guard against
+// retrying more than once -- see src/lib/load-matching.ts's retry pass.
+// sentAt is really "claimed at", not "confirmed delivered at" -- status is
+// the source of truth for delivery outcome.
 model LoadAlert {
-  id               String       @id @default(cuid())
-  loadId           String       @map("load_id")
-  searchLocationId String       @map("search_location_id")
+  id               String          @id @default(cuid())
+  loadId           String          @map("load_id")
+  searchLocationId String          @map("search_location_id")
   channel          AlertChannel
-  sentAt           DateTime     @default(now()) @map("sent_at")
+  status           AlertSendStatus @default(failed)
+  attempts         Int             @default(0)
+  sentAt           DateTime        @default(now()) @map("sent_at")
 
   load           Load           @relation(fields: [loadId], references: [id], onDelete: Cascade)
   searchLocation SearchLocation @relation(fields: [searchLocationId], references: [id], onDelete: Cascade)
