@@ -32,40 +32,36 @@ export function DashboardNav({
   const pathname = usePathname();
 
   return (
-    <header className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-brand-border pb-4">
-      <div className="flex flex-wrap items-center gap-4">
-        <Link href="/dashboard" className="shrink-0">
-          <Image
-            src="/logo-horizontal.png"
-            alt="HeavyHaul Escort Loads"
-            width={160}
-            height={40}
-            className="h-8 w-auto"
-            priority
-          />
-        </Link>
-        <div className="flex flex-wrap items-center gap-2">
-          {hasLoadManagerProfile ? (
-            <NavTab href="/dashboard/load-manager" active={pathname.startsWith("/dashboard/load-manager")}>
-              Post Loads
-            </NavTab>
-          ) : (
-            <Link href="/dashboard/add-load-manager" className="text-sm text-brand-accent underline">
-              + Add Load Manager access
-            </Link>
-          )}
-          {hasPilotCarProfile ? (
-            <NavTab href="/dashboard/pilot-car" active={pathname.startsWith("/dashboard/pilot-car")}>
-              Browse Loads
-            </NavTab>
-          ) : (
-            <Link href="/dashboard/add-pilot-car" className="text-sm text-brand-accent underline">
-              + Add Pilot Car access
-            </Link>
-          )}
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
+    <header className="mb-6 flex flex-col items-start gap-4 border-b border-brand-border pb-4">
+      <Link href="/dashboard" className="shrink-0">
+        <Image
+          src="/logo-horizontal.png"
+          alt="HeavyHaul Escort Loads"
+          width={320}
+          height={80}
+          className="h-20 w-auto"
+          priority
+        />
+      </Link>
+      <div className="flex flex-wrap items-center gap-3">
+        {hasLoadManagerProfile ? (
+          <NavTab href="/dashboard/load-manager" active={pathname.startsWith("/dashboard/load-manager")}>
+            Post Loads
+          </NavTab>
+        ) : (
+          <Link href="/dashboard/add-load-manager" className="text-sm text-brand-accent underline">
+            + Add Load Manager access
+          </Link>
+        )}
+        {hasPilotCarProfile ? (
+          <NavTab href="/dashboard/pilot-car" active={pathname.startsWith("/dashboard/pilot-car")}>
+            Browse Loads
+          </NavTab>
+        ) : (
+          <Link href="/dashboard/add-pilot-car" className="text-sm text-brand-accent underline">
+            + Add Pilot Car access
+          </Link>
+        )}
         <span className="text-sm text-brand-muted">{email}</span>
         <SignOutButton />
       </div>
