@@ -46,7 +46,7 @@ export function SiteFooter() {
           Privacy Policy
         </Link>
       </nav>
-      <div className="mb-3 flex justify-center gap-4">
+            <div className="mb-3 flex justify-center gap-4">
         {SOCIAL_LINKS.map((social) => (
           
             key={social.name}
