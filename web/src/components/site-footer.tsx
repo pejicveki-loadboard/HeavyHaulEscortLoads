@@ -21,10 +21,10 @@ export function SiteFooter() {
         </Link>
       </nav>
       <p className="mx-auto max-w-2xl text-xs text-brand-muted">
-        HeavyHaul Escort Loads is a trade name (assumed name / DBA) of{" "}
-        <strong className="text-brand-text">Ved Trucking, LLC</strong>, registered with the
-        Minnesota Secretary of State (Certificate of Assumed Name, File Number 1661834300023).
-        Ved Trucking, LLC is based at 1202 4th Ave NE, Austin, MN 55912.
+        HeavyHaul Escort Loads is a nationwide marketplace connecting trucking companies and
+        freight brokers hauling oversize and overweight loads with pilot car escort drivers and
+        companies. Post a load for free, or subscribe as a pilot car company to search the load
+        board, get real-time match alerts, and connect with load managers across the U.S.
       </p>
     </footer>
   );
