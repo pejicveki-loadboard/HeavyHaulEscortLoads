@@ -13,6 +13,12 @@ export function SiteFooter() {
         <Link href="/contact" className="text-brand-accent underline">
           Contact
         </Link>
+        <Link href="/terms" className="text-brand-accent underline">
+          Terms of Use
+        </Link>
+        <Link href="/privacy" className="text-brand-accent underline">
+          Privacy Policy
+        </Link>
       </nav>
       <p className="mx-auto max-w-2xl text-xs text-brand-muted">
         HeavyHaul Escort Loads is a trade name (assumed name / DBA) of{" "}
