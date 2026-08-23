@@ -13,15 +13,17 @@ export async function sendEmail({
   to,
   subject,
   html,
+  replyTo,
 }: {
   to: string;
   subject: string;
   html: string;
+  replyTo?: string;
 }) {
   const from = process.env.RESEND_FROM_EMAIL;
   if (!from) throw new Error("RESEND_FROM_EMAIL is not set.");
 
-  const result = await getClient().emails.send({ from, to, subject, html });
+  const result = await getClient().emails.send({ from, to, subject, html, replyTo });
   if (result.error) {
     throw new Error(`Resend send failed: ${result.error.message}`);
   }

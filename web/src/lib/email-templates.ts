@@ -7,6 +7,42 @@ function positionLabels(positions: EscortPosition[]) {
     .join(", ");
 }
 
+// Contact-form submissions are free text from an unauthenticated visitor, so
+// unlike the other templates here (which only interpolate system-controlled
+// values), this one needs real HTML escaping before it goes into an email
+// body.
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+export function contactFormEmail({
+  name,
+  email,
+  message,
+}: {
+  name: string;
+  email: string;
+  message: string;
+}) {
+  // Subject is a header, not HTML -- strip newlines instead of HTML-escaping
+  // to prevent header injection.
+  const subjectName = name.replace(/[\r\n]/g, " ").trim();
+  const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
+  return {
+    subject: `Contact form: ${subjectName}`,
+    html: `
+      <p><strong>From:</strong> ${escapeHtml(name)} (${escapeHtml(email)})</p>
+      <p><strong>Message:</strong></p>
+      <p>${safeMessage}</p>
+    `,
+  };
+}
+
 export function verificationEmail(verifyUrl: string) {
   return {
     subject: "Verify your email — HeavyHaul Escort Loads",
