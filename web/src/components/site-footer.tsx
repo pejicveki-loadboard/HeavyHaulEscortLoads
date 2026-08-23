@@ -48,7 +48,7 @@ export function SiteFooter() {
       </nav>
                   <div className="mb-3 flex justify-center gap-4">
         {SOCIAL_LINKS.map((social) => (
-          
+          <a
             key={social.name}
             href={social.href}
             target="_blank"
