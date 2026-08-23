@@ -63,7 +63,7 @@ export default function SignupPage() {
         alt="HeavyHaul Escort Loads"
         width={116}
         height={40}
-        className="h-10 w-auto"
+        className="h-10 w-auto self-start"
         priority
       />
       <h1 className="text-2xl font-semibold text-brand-text">Create your account</h1>
