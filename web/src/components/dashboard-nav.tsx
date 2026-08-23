@@ -65,6 +65,9 @@ export function DashboardNav({
         <Link href="/pricing" className="text-sm text-brand-accent underline">
           Pricing
         </Link>
+        <Link href="/faq" className="text-sm text-brand-accent underline">
+          FAQ
+        </Link>
         <span className="text-sm text-brand-muted">{email}</span>
         <SignOutButton />
       </div>

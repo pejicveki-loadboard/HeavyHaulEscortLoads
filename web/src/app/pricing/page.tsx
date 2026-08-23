@@ -107,6 +107,13 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+
+      <p className="text-center text-sm text-brand-muted">
+        Questions?{" "}
+        <Link href="/faq" className="text-brand-accent underline">
+          See the FAQ
+        </Link>
+      </p>
     </main>
   );
 }
