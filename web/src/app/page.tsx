@@ -31,6 +31,9 @@ export default async function Home() {
           Log in
         </Link>
       </div>
+      <Link href="/pricing" className="text-sm text-brand-accent underline">
+        View pricing
+      </Link>
     </main>
   );
 }
