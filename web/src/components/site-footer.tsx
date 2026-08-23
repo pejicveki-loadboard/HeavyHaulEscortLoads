@@ -4,6 +4,9 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-brand-border px-6 py-6 text-center">
       <nav className="mb-3 flex flex-wrap justify-center gap-4 text-sm">
+        <Link href="/about" className="text-brand-accent underline">
+          About
+        </Link>
         <Link href="/pricing" className="text-brand-accent underline">
           Pricing
         </Link>

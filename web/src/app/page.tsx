@@ -32,6 +32,9 @@ export default async function Home() {
         </Link>
       </div>
       <div className="flex gap-4 text-sm">
+        <Link href="/about" className="text-brand-accent underline">
+          About
+        </Link>
         <Link href="/pricing" className="text-brand-accent underline">
           View pricing
         </Link>
