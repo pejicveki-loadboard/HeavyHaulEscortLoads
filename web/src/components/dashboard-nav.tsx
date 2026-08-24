@@ -43,27 +43,31 @@ export function DashboardNav({
           priority
         />
       </Link>
-      <div className="flex flex-wrap items-center gap-3">
-        {hasLoadManagerProfile ? (
-          <NavTab href="/dashboard/load-manager" active={pathname.startsWith("/dashboard/load-manager")}>
-            Post Loads
-          </NavTab>
-        ) : (
-          <Link href="/dashboard/add-load-manager" className="text-sm text-brand-accent underline">
-            + Add Load Manager access
-          </Link>
-        )}
-        {hasPilotCarProfile ? (
-          <NavTab href="/dashboard/pilot-car" active={pathname.startsWith("/dashboard/pilot-car")}>
-            Browse Loads
-          </NavTab>
-        ) : (
-          <Link href="/dashboard/add-pilot-car" className="text-sm text-brand-accent underline">
-            + Add Pilot Car access
-          </Link>
-        )}
-        <span className="text-sm text-brand-muted">{email}</span>
-        <SignOutButton />
+      <div className="flex w-full flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {hasLoadManagerProfile ? (
+            <NavTab href="/dashboard/load-manager" active={pathname.startsWith("/dashboard/load-manager")}>
+              Post Loads
+            </NavTab>
+          ) : (
+            <Link href="/dashboard/add-load-manager" className="text-sm text-brand-accent underline">
+              + Add Load Manager access
+            </Link>
+          )}
+          {hasPilotCarProfile ? (
+            <NavTab href="/dashboard/pilot-car" active={pathname.startsWith("/dashboard/pilot-car")}>
+              Browse Loads
+            </NavTab>
+          ) : (
+            <Link href="/dashboard/add-pilot-car" className="text-sm text-brand-accent underline">
+              + Add Pilot Car access
+            </Link>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-brand-muted">{email}</span>
+          <SignOutButton />
+        </div>
       </div>
     </header>
   );
