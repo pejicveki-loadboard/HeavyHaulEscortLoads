@@ -9,10 +9,10 @@ function NavTab({ href, active, children }: { href: string; active: boolean; chi
   return (
     <Link
       href={href}
-      className={`rounded px-3 py-1.5 text-sm ${
+      className={`rounded px-3 py-1.5 text-sm transition-all duration-150 active:scale-[0.97] ${
         active
-          ? "bg-brand-accent text-brand-accent-text"
-          : "border border-brand-border text-brand-muted"
+          ? "bg-brand-accent text-brand-accent-text hover:bg-brand-accent-light active:bg-brand-accent-deep"
+          : "border border-brand-border text-brand-muted hover:border-brand-accent hover:bg-brand-accent/8 hover:text-brand-text active:bg-brand-accent/16"
       }`}
     >
       {children}
@@ -39,7 +39,7 @@ export function DashboardNav({
           alt="HeavyHaul Escort Loads"
           width={232}
           height={80}
-          className="h-20 w-auto"
+          className="h-[72px] w-auto"
           priority
         />
       </Link>

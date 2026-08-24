@@ -9,6 +9,7 @@
   --color-brand-panel: #121821;
   --color-brand-border: #22303c;
   --color-brand-accent: #f5a623;
+  --color-brand-accent-light: #ffb941;
   --color-brand-accent-deep: #d3830c;
   /* Dark text pairs with the accent for contrast (buttons) -- matches the
      landing page's button color exactly, not in the brand-kit doc itself. */
@@ -27,6 +28,7 @@
   --color-brand-panel: var(--color-brand-panel);
   --color-brand-border: var(--color-brand-border);
   --color-brand-accent: var(--color-brand-accent);
+  --color-brand-accent-light: var(--color-brand-accent-light);
   --color-brand-accent-deep: var(--color-brand-accent-deep);
   --color-brand-accent-text: var(--color-brand-accent-text);
   --color-brand-text: var(--color-brand-text);
