@@ -51,3 +51,11 @@ h4 {
   font-family: var(--font-heading);
   font-weight: 700;
 }
+
+/* Native date inputs render their calendar-icon indicator in a dark color
+   by default, which disappears against our navy panel background.
+   color-scheme tells the browser to draw native form-control chrome
+   (the calendar icon, in Chrome/Edge/Safari) using light-on-dark instead. */
+input[type="date"] {
+  color-scheme: dark;
+}
