@@ -45,7 +45,7 @@ export default function LoginPage() {
             alt="HeavyHaul Escort Loads"
             width={139}
             height={48}
-            className="h-12 w-auto self-start"
+            className="w-full h-auto self-start"
             priority
           />
           <h1 className="text-2xl font-semibold text-brand-text">Log in</h1>
