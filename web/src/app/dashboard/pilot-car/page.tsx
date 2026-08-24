@@ -28,7 +28,7 @@ export default async function PilotCarDashboardPage() {
         <h1 className="text-2xl font-semibold text-brand-text">Pilot Car Dashboard</h1>
         <p className="text-brand-muted">
           {profile.companyName} ·{" "}
-          <Link href="/dashboard/pilot-car/edit" className="text-brand-accent underline">
+          <Link href="/dashboard/pilot-car/edit" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             Edit profile
           </Link>
         </p>
@@ -47,7 +47,7 @@ export default async function PilotCarDashboardPage() {
       <section className="rounded border border-brand-border bg-brand-panel p-4">
         <div className="mb-2 flex items-center justify-between">
           <h2 className="font-semibold text-brand-text">Search locations</h2>
-          <Link href="/dashboard/pilot-car/search-locations" className="text-sm text-brand-accent underline">
+          <Link href="/dashboard/pilot-car/search-locations" className="text-sm text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             Manage
           </Link>
         </div>

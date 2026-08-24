@@ -27,22 +27,22 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-brand-border px-6 py-6 text-center">
       <nav className="mb-3 flex flex-wrap justify-center gap-4 text-sm">
-        <Link href="/about" className="text-brand-accent underline">
+        <Link href="/about" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           About
         </Link>
-        <Link href="/pricing" className="text-brand-accent underline">
+        <Link href="/pricing" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           Pricing
         </Link>
-        <Link href="/faq" className="text-brand-accent underline">
+        <Link href="/faq" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           FAQ
         </Link>
-        <Link href="/contact" className="text-brand-accent underline">
+        <Link href="/contact" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           Contact
         </Link>
-        <Link href="/terms" className="text-brand-accent underline">
+        <Link href="/terms" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           Terms of Use
         </Link>
-        <Link href="/privacy" className="text-brand-accent underline">
+        <Link href="/privacy" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           Privacy Policy
         </Link>
       </nav>

@@ -35,7 +35,7 @@ export default function ContactPage() {
 
       <p className="text-sm text-brand-muted">
         Prefer email? Reach us directly at{" "}
-        <a href="mailto:info@heavyhaulescortloads.com" className="text-brand-accent underline">
+        <a href="mailto:info@heavyhaulescortloads.com" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           info@heavyhaulescortloads.com
         </a>
         .

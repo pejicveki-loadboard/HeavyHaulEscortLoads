@@ -93,21 +93,21 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
               <div className="flex shrink-0 gap-2">
                 <button
                   onClick={() => setEditingId(location.id)}
-                  className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text"
+                  className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => togglePause(location)}
                   disabled={busyId === location.id}
-                  className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text disabled:opacity-50"
+                  className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text disabled:opacity-50 transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22 disabled:hover:bg-transparent disabled:hover:border-brand-border disabled:hover:text-brand-text disabled:active:scale-100"
                 >
                   {location.active ? "Pause" : "Resume"}
                 </button>
                 <button
                   onClick={() => handleDelete(location.id)}
                   disabled={busyId === location.id}
-                  className="rounded border border-red-800 px-3 py-1.5 text-sm text-red-400 disabled:opacity-50"
+                  className="rounded border border-red-800 px-3 py-1.5 text-sm text-red-400 disabled:opacity-50 transition-all duration-150 hover:border-[#e04b4b] hover:bg-[#e04b4b]/14 hover:text-[#ff9d9d] active:bg-[#e04b4b]/26 disabled:hover:bg-transparent"
                 >
                   Remove
                 </button>
@@ -129,7 +129,7 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
       ) : (
         <button
           onClick={() => setShowAddForm(true)}
-          className="self-start rounded border border-brand-border px-4 py-2 text-sm text-brand-text"
+          className="self-start rounded border border-brand-border px-4 py-2 text-sm text-brand-text transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22"
         >
           + Add search location
         </button>

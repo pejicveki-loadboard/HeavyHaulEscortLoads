@@ -21,7 +21,7 @@ export default async function SearchLocationsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <Link href="/dashboard/pilot-car" className="text-sm text-brand-accent underline">
+        <Link href="/dashboard/pilot-car" className="text-sm text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           &larr; Back to dashboard
         </Link>
         <h1 className="mt-2 text-2xl font-semibold text-brand-text">Manage search locations</h1>

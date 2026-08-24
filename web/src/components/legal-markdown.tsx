@@ -19,11 +19,11 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
       const key = `${keyPrefix}-${i}`;
       nodes.push(
         href.startsWith("/") ? (
-          <Link key={key} href={href} className="text-brand-accent underline">
+          <Link key={key} href={href} className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             {match[1]}
           </Link>
         ) : (
-          <a key={key} href={href} className="text-brand-accent underline">
+          <a key={key} href={href} className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             {match[1]}
           </a>
         )

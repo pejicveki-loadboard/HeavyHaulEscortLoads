@@ -26,7 +26,7 @@ export function VerifyEmailBanner() {
         <button
           onClick={resend}
           disabled={status === "sending"}
-          className="shrink-0 rounded border border-brand-accent px-3 py-1 text-brand-accent disabled:opacity-50"
+          className="shrink-0 rounded border border-brand-accent px-3 py-1 text-brand-accent disabled:opacity-50 transition-all duration-150 hover:border-brand-accent-light hover:bg-brand-accent/14 hover:text-brand-accent-light active:scale-[0.94] active:border-brand-accent-deep active:bg-brand-accent/24 active:text-brand-accent-deep disabled:hover:bg-transparent disabled:hover:border-brand-accent disabled:hover:text-brand-accent disabled:active:scale-100"
         >
           {status === "sending" ? "Sending..." : status === "error" ? "Try again" : "Resend email"}
         </button>

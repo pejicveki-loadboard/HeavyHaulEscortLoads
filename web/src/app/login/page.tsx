@@ -74,14 +74,14 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50"
+              className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50 transition-all duration-150 hover:bg-brand-accent-light active:scale-[0.97] active:bg-brand-accent-deep disabled:hover:bg-brand-accent disabled:active:scale-100"
             >
               {submitting ? "Logging in..." : "Log in"}
             </button>
           </form>
           <p className="text-sm text-brand-muted">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-brand-accent underline">
+            <Link href="/signup" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
               Sign up
             </Link>
           </p>

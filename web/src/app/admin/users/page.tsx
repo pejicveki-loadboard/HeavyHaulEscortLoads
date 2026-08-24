@@ -118,7 +118,7 @@ export default async function AdminUsersPage({
           {lm.page > 1 && (
             <Link
               href={pageLink(basePath, sp, "lm", lm.page - 1)}
-              className="text-brand-accent underline"
+              className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep"
             >
               Previous
             </Link>
@@ -126,7 +126,7 @@ export default async function AdminUsersPage({
           {lm.page < lmPages && (
             <Link
               href={pageLink(basePath, sp, "lm", lm.page + 1)}
-              className="text-brand-accent underline"
+              className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep"
             >
               Next
             </Link>
@@ -198,7 +198,7 @@ export default async function AdminUsersPage({
           {pc.page > 1 && (
             <Link
               href={pageLink(basePath, sp, "pc", pc.page - 1)}
-              className="text-brand-accent underline"
+              className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep"
             >
               Previous
             </Link>
@@ -206,7 +206,7 @@ export default async function AdminUsersPage({
           {pc.page < pcPages && (
             <Link
               href={pageLink(basePath, sp, "pc", pc.page + 1)}
-              className="text-brand-accent underline"
+              className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep"
             >
               Next
             </Link>

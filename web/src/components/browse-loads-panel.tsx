@@ -203,7 +203,7 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
         <button
           type="submit"
           disabled={loading}
-          className="self-start rounded bg-brand-accent px-4 py-2 text-sm text-brand-accent-text disabled:opacity-50"
+          className="self-start rounded bg-brand-accent px-4 py-2 text-sm text-brand-accent-text disabled:opacity-50 transition-all duration-150 hover:bg-brand-accent-light active:scale-[0.97] active:bg-brand-accent-deep disabled:hover:bg-brand-accent disabled:active:scale-100"
         >
           {loading ? "Searching..." : "Search"}
         </button>
@@ -242,7 +242,7 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
                   <button
                     onClick={() => revealContact(load.id)}
                     disabled={revealingId === load.id}
-                    className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text disabled:opacity-50"
+                    className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text disabled:opacity-50 transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22 disabled:hover:bg-transparent disabled:hover:border-brand-border disabled:hover:text-brand-text disabled:active:scale-100"
                   >
                     {revealingId === load.id ? "Revealing..." : "Reveal contact"}
                   </button>

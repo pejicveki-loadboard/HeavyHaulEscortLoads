@@ -82,15 +82,15 @@ export default function AboutPage() {
         <h2 className="mt-4 text-xl font-semibold text-brand-text">Get Started</h2>
         <p className="text-brand-text">
           Post a load for free, or see{" "}
-          <Link href="/pricing" className="text-brand-accent underline">
+          <Link href="/pricing" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             pricing
           </Link>{" "}
           to start your pilot car company&apos;s free trial. Questions? Check our{" "}
-          <Link href="/faq" className="text-brand-accent underline">
+          <Link href="/faq" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             FAQ
           </Link>{" "}
           or{" "}
-          <Link href="/contact" className="text-brand-accent underline">
+          <Link href="/contact" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             contact us
           </Link>{" "}
           directly.

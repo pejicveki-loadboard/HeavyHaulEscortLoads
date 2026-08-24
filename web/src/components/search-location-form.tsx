@@ -167,7 +167,7 @@ export function SearchLocationForm({
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50"
+          className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50 transition-all duration-150 hover:bg-brand-accent-light active:scale-[0.97] active:bg-brand-accent-deep disabled:hover:bg-brand-accent disabled:active:scale-100"
         >
           {submitting ? "Saving..." : mode === "edit" ? "Save changes" : "Add location"}
         </button>
@@ -175,7 +175,7 @@ export function SearchLocationForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded border border-brand-border px-4 py-2 text-brand-text"
+            className="rounded border border-brand-border px-4 py-2 text-brand-text transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22"
           >
             Cancel
           </button>

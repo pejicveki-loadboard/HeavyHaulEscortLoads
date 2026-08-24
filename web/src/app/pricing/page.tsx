@@ -74,7 +74,7 @@ export default function PricingPage() {
             <p className="text-sm text-brand-muted">30-day free trial. No card required.</p>
             <Link
               href="/signup?plan=monthly"
-              className="mt-auto rounded bg-brand-accent px-4 py-2 text-center font-semibold text-brand-accent-text"
+              className="mt-auto rounded bg-brand-accent px-4 py-2 text-center font-semibold text-brand-accent-text transition-all duration-150 hover:bg-brand-accent-light active:scale-[0.97] active:bg-brand-accent-deep"
             >
               Start Free Trial
             </Link>
@@ -100,7 +100,7 @@ export default function PricingPage() {
             <p className="text-sm text-brand-muted">30-day free trial. No card required.</p>
             <Link
               href="/signup?plan=annual"
-              className="mt-auto rounded bg-brand-accent px-4 py-2 text-center font-semibold text-brand-accent-text"
+              className="mt-auto rounded bg-brand-accent px-4 py-2 text-center font-semibold text-brand-accent-text transition-all duration-150 hover:bg-brand-accent-light active:scale-[0.97] active:bg-brand-accent-deep"
             >
               Start Free Trial
             </Link>
@@ -110,7 +110,7 @@ export default function PricingPage() {
 
       <p className="text-center text-sm text-brand-muted">
         Questions?{" "}
-        <Link href="/faq" className="text-brand-accent underline">
+        <Link href="/faq" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           See the FAQ
         </Link>
       </p>

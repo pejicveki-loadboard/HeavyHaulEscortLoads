@@ -111,7 +111,7 @@ export default async function AdminLoadsPage({
         {t.page > 1 && (
           <Link
             href={pageLink(basePath, sp, "l", t.page - 1)}
-            className="text-brand-accent underline"
+            className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep"
           >
             Previous
           </Link>
@@ -119,7 +119,7 @@ export default async function AdminLoadsPage({
         {t.page < totalPages && (
           <Link
             href={pageLink(basePath, sp, "l", t.page + 1)}
-            className="text-brand-accent underline"
+            className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep"
           >
             Next
           </Link>

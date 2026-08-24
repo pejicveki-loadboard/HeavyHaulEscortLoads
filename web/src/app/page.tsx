@@ -21,24 +21,24 @@ export default async function Home() {
         Post an oversize load or find pilot car work — one login for both.
       </p>
       <div className="flex gap-4">
-        <Link href="/signup" className="rounded bg-brand-accent px-5 py-2.5 text-brand-accent-text">
+        <Link href="/signup" className="rounded bg-brand-accent px-5 py-2.5 text-brand-accent-text transition-all duration-150 hover:bg-brand-accent-light active:scale-[0.97] active:bg-brand-accent-deep">
           Sign up
         </Link>
         <Link
           href="/login"
-          className="rounded border border-brand-border px-5 py-2.5 text-brand-text"
+          className="rounded border border-brand-border px-5 py-2.5 text-brand-text transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22"
         >
           Log in
         </Link>
       </div>
       <div className="flex gap-4 text-sm">
-        <Link href="/about" className="text-brand-accent underline">
+        <Link href="/about" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           About
         </Link>
-        <Link href="/pricing" className="text-brand-accent underline">
+        <Link href="/pricing" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           View pricing
         </Link>
-        <Link href="/faq" className="text-brand-accent underline">
+        <Link href="/faq" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           FAQ
         </Link>
       </div>

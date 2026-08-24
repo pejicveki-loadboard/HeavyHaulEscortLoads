@@ -26,16 +26,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           />
         </Link>
         <nav className="flex flex-wrap items-center gap-4 text-sm">
-          <Link href="/admin" className="text-brand-accent underline">
+          <Link href="/admin" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             Summary
           </Link>
-          <Link href="/admin/users" className="text-brand-accent underline">
+          <Link href="/admin/users" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             Users
           </Link>
-          <Link href="/admin/loads" className="text-brand-accent underline">
+          <Link href="/admin/loads" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             Loads
           </Link>
-          <Link href="/dashboard" className="text-brand-accent underline">
+          <Link href="/dashboard" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             &larr; Back to dashboard
           </Link>
         </nav>

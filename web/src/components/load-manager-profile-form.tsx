@@ -115,7 +115,7 @@ export function LoadManagerProfileForm({
       <button
         type="submit"
         disabled={submitting}
-        className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50"
+        className="rounded bg-brand-accent px-4 py-2 text-brand-accent-text disabled:opacity-50 transition-all duration-150 hover:bg-brand-accent-light active:scale-[0.97] active:bg-brand-accent-deep disabled:hover:bg-brand-accent disabled:active:scale-100"
       >
         {submitting ? "Saving..." : mode === "edit" ? "Save changes" : "Create Load Manager profile"}
       </button>
