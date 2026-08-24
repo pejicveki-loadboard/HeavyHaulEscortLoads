@@ -43,9 +43,9 @@ export default function LoginPage() {
           <Image
             src="/logo-horizontal.png"
             alt="HeavyHaul Escort Loads"
-            width={186}
-            height={64}
-            className="h-16 w-auto self-start"
+            width={139}
+            height={48}
+            className="h-12 w-auto self-start"
             priority
           />
           <h1 className="text-2xl font-semibold text-brand-text">Log in</h1>
