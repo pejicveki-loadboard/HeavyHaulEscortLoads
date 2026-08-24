@@ -72,6 +72,11 @@ export function LoadList({ loads }: { loads: LoadRow[] }) {
               <p className="font-semibold text-brand-text">
                 {load.originCity}, {load.originState} &rarr; {load.destinationCity},{" "}
                 {load.destinationState}
+                {load.status === "open" && (
+                  <span className="ml-2 rounded bg-brand-accent/15 px-2 py-0.5 text-xs text-brand-accent">
+                    Open
+                  </span>
+                )}
                 {load.status === "covered" && (
                   <span className="ml-2 rounded bg-green-900 px-2 py-0.5 text-xs text-green-300">
                     Covered

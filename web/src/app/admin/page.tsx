@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { effectiveSubscriptionStatus } from "@/lib/subscription";
 import { SubscriptionStatus } from "@/generated/prisma/enums";
+import { BuildingIcon, CarIcon, TruckIcon } from "@/components/icons";
 
 export default async function AdminSummaryPage() {
   const [loadManagerCount, pilotCarCount, loadCount, pilotCarProfiles] = await Promise.all([
@@ -28,14 +29,17 @@ export default async function AdminSummaryPage() {
 
       <div className="grid grid-cols-3 gap-4">
         <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <BuildingIcon className="mb-2 h-6 w-6 text-brand-accent" />
           <p className="text-sm text-brand-muted">Load Manager signups</p>
           <p className="text-2xl font-semibold text-brand-text">{loadManagerCount}</p>
         </div>
         <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <CarIcon className="mb-2 h-6 w-6 text-brand-accent" />
           <p className="text-sm text-brand-muted">Pilot Car signups</p>
           <p className="text-2xl font-semibold text-brand-text">{pilotCarCount}</p>
         </div>
         <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <TruckIcon className="mb-2 h-6 w-6 text-brand-accent" />
           <p className="text-sm text-brand-muted">Loads posted</p>
           <p className="text-2xl font-semibold text-brand-text">{loadCount}</p>
         </div>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { LoadList, type LoadRow } from "@/components/load-list";
+import { TruckIcon, CheckIcon, BellIcon } from "@/components/icons";
 
 export default async function LoadManagerDashboardPage() {
   const session = await auth();
@@ -65,14 +66,17 @@ export default async function LoadManagerDashboardPage() {
 
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <TruckIcon className="mb-2 h-6 w-6 text-brand-accent" />
           <div className="text-3xl font-bold text-brand-accent">{openCount}</div>
           <div className="mt-1 text-xs text-brand-muted">Open loads</div>
         </div>
         <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <CheckIcon className="mb-2 h-6 w-6 text-brand-accent" />
           <div className="text-3xl font-bold text-brand-text">{coveredThisMonthCount}</div>
           <div className="mt-1 text-xs text-brand-muted">Covered this month</div>
         </div>
         <div className="rounded border border-brand-border bg-brand-panel p-4">
+          <BellIcon className="mb-2 h-6 w-6 text-brand-accent" />
           <div className="text-3xl font-bold text-brand-text">{alertsSentCount}</div>
           <div className="mt-1 text-xs text-brand-muted">Pilot car alerts sent</div>
         </div>
