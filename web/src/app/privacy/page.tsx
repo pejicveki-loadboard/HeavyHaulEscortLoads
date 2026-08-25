@@ -55,6 +55,8 @@ We do not sell your personal information.
 
 We do not share your information with these providers for their own marketing purposes.
 
+**Text message (SMS) alerts.** If you opt in to SMS load-match alerts, we use your phone number only to send those alerts through Twilio. We do not sell or share your mobile number with any third party for their own marketing purposes. Message frequency varies based on how many loads match your saved search criteria. Message and data rates may apply. Reply HELP for help or STOP to cancel at any time.
+
 **When required by law**, or to protect the rights, safety, or property of HeavyHaul Escort Loads, our users, or the public.
 
 ## 5. Your Choices and Rights
