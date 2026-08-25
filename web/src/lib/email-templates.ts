@@ -102,5 +102,5 @@ export function loadMatchSmsBody({
   distanceMiles: number;
 }) {
   const positions = positionLabels(escortPositions);
-  return `New load: ${positions} escort, ${originCity} ${originState} -> ${destinationCity} ${destinationState}, ${Math.round(distanceMiles)}mi -- view & reveal contact at ${process.env.APP_BASE_URL}/dashboard/pilot-car`;
+  return `New load: ${positions} escort, ${originCity} ${originState} -> ${destinationCity} ${destinationState}, ${Math.round(distanceMiles)}mi -- view & reveal contact at ${process.env.APP_BASE_URL}/dashboard/pilot-car Reply STOP to opt out.`;
 }
