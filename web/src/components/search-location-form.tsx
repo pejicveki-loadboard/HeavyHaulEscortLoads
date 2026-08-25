@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ESCORT_POSITIONS } from "@/lib/escort-positions";
 import { US_STATES } from "@/lib/us-states";
 import type { AlertChannelPreference, EscortPosition } from "@/generated/prisma/enums";
@@ -19,12 +20,17 @@ export function SearchLocationForm({
   mode,
   locationId,
   initialValues,
+  profilePhone,
   onSaved,
   onCancel,
 }: {
   mode: "create" | "edit";
   locationId?: string;
   initialValues?: SearchLocationValues;
+  // Phone number alerts are sent to (from the Pilot Car profile) -- shown
+  // next to the SMS consent checkbox so a user knows exactly what number
+  // they're opting in, per Twilio's A2P 10DLC web-form opt-in requirements.
+  profilePhone: string;
   onSaved?: () => void;
   onCancel?: () => void;
 }) {
@@ -36,8 +42,20 @@ export function SearchLocationForm({
     initialValues?.escortPositions ?? []
   );
   const [active, setActive] = useState(initialValues?.active ?? true);
-  const [alertChannel, setAlertChannel] = useState<AlertChannelPreference>(
-    initialValues?.alertChannel ?? "both"
+  // Email and SMS are now two independent, explicitly-checked boxes rather
+  // than one dropdown -- Twilio's A2P 10DLC web-form opt-in rules require
+  // the SMS consent checkbox to start UNCHECKED (never pre-selected), with
+  // its own consent language, frequency/rate disclosures, and opt-out
+  // instructions right on the form. Email defaults on since it's the
+  // primary, no-consent-required channel; SMS defaults off for new
+  // locations. Editing an existing location just reflects its current
+  // saved preference -- it doesn't force a fresh opt-in re-check.
+  const initialChannel = initialValues?.alertChannel ?? "email";
+  const [emailAlerts, setEmailAlerts] = useState(
+    initialChannel === "email" || initialChannel === "both"
+  );
+  const [smsAlerts, setSmsAlerts] = useState(
+    initialChannel === "sms" || initialChannel === "both"
   );
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -51,6 +69,12 @@ export function SearchLocationForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!emailAlerts && !smsAlerts) {
+      setError("Choose at least one alert channel (email or text).");
+      return;
+    }
+    const alertChannel: AlertChannelPreference =
+      emailAlerts && smsAlerts ? "both" : smsAlerts ? "sms" : "email";
     setSubmitting(true);
     try {
       const url =
@@ -146,18 +170,51 @@ export function SearchLocationForm({
           ))}
         </div>
       </div>
-      <label className="flex flex-col gap-1 text-sm">
-        Alert channel
-        <select
-          value={alertChannel}
-          onChange={(e) => setAlertChannel(e.target.value as AlertChannelPreference)}
-          className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
-        >
-          <option value="both">Email + SMS</option>
-          <option value="email">Email only</option>
-          <option value="sms">SMS only</option>
-        </select>
-      </label>
+      <div className="flex flex-col gap-2 text-sm">
+        Alert channels
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={emailAlerts}
+            onChange={(e) => setEmailAlerts(e.target.checked)}
+          />
+          Email alerts
+        </label>
+        <label className="flex items-start gap-2">
+          <input
+            type="checkbox"
+            checked={smsAlerts}
+            onChange={(e) => setSmsAlerts(e.target.checked)}
+            className="mt-0.5"
+          />
+          <span>
+            Yes, I&apos;d like to receive automated text messages from HeavyHaul Escort Loads
+            about load matches for this search location. Message frequency varies based on how
+            many loads match. Msg &amp; data rates may apply.
+            <br />
+            <span className="text-brand-muted">
+              We&apos;ll text {profilePhone} — update this number from your profile if it&apos;s
+              wrong. Reply HELP for help, STOP to cancel anytime. See our{" "}
+              <Link
+                href="/terms"
+                target="_blank"
+                className="text-brand-accent underline"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                target="_blank"
+                className="text-brand-accent underline"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </span>
+          </span>
+        </label>
+      </div>
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
         Active (uncheck to mute/pause this location — no alerts fire, without deleting it)

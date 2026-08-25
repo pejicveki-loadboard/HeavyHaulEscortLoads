@@ -63,7 +63,10 @@ export async function POST(request: Request) {
       radiusMiles: parsed.data.radiusMiles,
       escortPositions: parsed.data.escortPositions as EscortPosition[],
       active: parsed.data.active ?? true,
-      alertChannel: parsed.data.alertChannel ?? AlertChannelPreference.both,
+      // Default to email-only, never a pre-selected SMS opt-in, per Twilio's
+      // A2P 10DLC web-form consent requirements -- the form always sends an
+      // explicit value now, but keep this safe as a fallback.
+      alertChannel: parsed.data.alertChannel ?? AlertChannelPreference.email,
     },
   });
 

@@ -29,7 +29,7 @@ export default async function SearchLocationsPage() {
           Each location is matched and alerted independently — add one per truck or region.
         </p>
       </div>
-      <SearchLocationsManager locations={locations} />
+      <SearchLocationsManager locations={locations} profilePhone={profile.phone} />
     </div>
   );
 }

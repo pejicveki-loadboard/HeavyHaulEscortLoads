@@ -162,10 +162,12 @@ model SearchLocation {
   escortPositions EscortPosition[]       @map("escort_positions")
   active          Boolean                @default(true)
   // Which channel(s) matching alerts fire on for this location. Added
-  // 2026-08-23 (Week 2 Day 5) -- defaults to both since that's the
-  // existing Day 4 behavior; this field is what lets a location opt out
-  // of one channel instead.
-  alertChannel    AlertChannelPreference @default(both) @map("alert_channel")
+  // 2026-08-23 (Week 2 Day 5), defaulted to `both` initially. Changed to
+  // `email` 2026-08-25: Twilio's A2P 10DLC web-form consent rules require
+  // the SMS opt-in to never be pre-selected, so new rows must not default
+  // into SMS. The search-location form now shows an explicit, unchecked
+  // SMS consent checkbox -- see search-location-form.tsx.
+  alertChannel    AlertChannelPreference @default(email) @map("alert_channel")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

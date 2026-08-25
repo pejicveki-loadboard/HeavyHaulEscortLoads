@@ -20,7 +20,13 @@ const CHANNEL_LABELS: Record<SearchLocationRow["alertChannel"], string> = {
   sms: "SMS only",
 };
 
-export function SearchLocationsManager({ locations }: { locations: SearchLocationRow[] }) {
+export function SearchLocationsManager({
+  locations,
+  profilePhone,
+}: {
+  locations: SearchLocationRow[];
+  profilePhone: string;
+}) {
   const router = useRouter();
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -66,6 +72,7 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
             mode="edit"
             locationId={location.id}
             initialValues={location}
+            profilePhone={profilePhone}
             onSaved={() => {
               setEditingId(null);
               router.refresh();
@@ -120,6 +127,7 @@ export function SearchLocationsManager({ locations }: { locations: SearchLocatio
       {showAddForm ? (
         <SearchLocationForm
           mode="create"
+          profilePhone={profilePhone}
           onSaved={() => {
             setShowAddForm(false);
             router.refresh();
