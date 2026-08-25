@@ -92,7 +92,7 @@ export function LoadManagerProfileForm({
           className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <label className="flex flex-1 flex-col gap-1 text-sm">
           DOT number (optional)
           <input

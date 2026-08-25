@@ -62,7 +62,7 @@ export default async function LoadManagerDashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded border border-brand-border bg-brand-panel p-4">
           <TruckIcon className="mb-2 h-6 w-6 text-brand-accent" />
           <div className="text-3xl font-bold text-brand-accent">{openCount}</div>

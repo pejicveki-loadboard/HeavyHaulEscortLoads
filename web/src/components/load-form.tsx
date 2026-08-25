@@ -94,7 +94,7 @@ export function LoadForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border border-brand-border bg-brand-panel p-4">
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <label className="flex flex-1 flex-col gap-1 text-sm">
           Origin city
           <input
@@ -104,7 +104,7 @@ export function LoadForm({
             className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
-        <label className="flex w-24 flex-col gap-1 text-sm">
+        <label className="flex w-full flex-col gap-1 text-sm sm:w-24">
           State
           <select
             required
@@ -123,7 +123,7 @@ export function LoadForm({
           </select>
         </label>
       </div>
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <label className="flex flex-1 flex-col gap-1 text-sm">
           Destination city
           <input
@@ -133,7 +133,7 @@ export function LoadForm({
             className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
-        <label className="flex w-24 flex-col gap-1 text-sm">
+        <label className="flex w-full flex-col gap-1 text-sm sm:w-24">
           State
           <select
             required
@@ -177,8 +177,8 @@ export function LoadForm({
           ))}
         </div>
       </div>
-      <div className="flex gap-3">
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <label className="flex flex-col gap-1 text-sm">
           Width (ft, optional)
           <input
             type="number"
@@ -189,7 +189,7 @@ export function LoadForm({
             className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1 text-sm">
           Height (ft, optional)
           <input
             type="number"
@@ -200,7 +200,7 @@ export function LoadForm({
             className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
-        <label className="flex flex-1 flex-col gap-1 text-sm">
+        <label className="flex flex-col gap-1 text-sm">
           Length (ft, optional)
           <input
             type="number"
@@ -222,7 +222,7 @@ export function LoadForm({
           className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <label className="flex flex-1 flex-col gap-1 text-sm">
           Rate (optional)
           <input
@@ -234,7 +234,7 @@ export function LoadForm({
             className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
-        <label className="flex w-40 flex-col gap-1 text-sm">
+        <label className="flex w-full flex-col gap-1 text-sm sm:w-40">
           Rate unit
           <select
             value={rateUnit}

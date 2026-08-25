@@ -114,7 +114,7 @@ export function SearchLocationForm({
           className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
         />
       </label>
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <label className="flex flex-1 flex-col gap-1 text-sm">
           City
           <input
@@ -124,7 +124,7 @@ export function SearchLocationForm({
             className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
-        <label className="flex w-24 flex-col gap-1 text-sm">
+        <label className="flex w-full flex-col gap-1 text-sm sm:w-24">
           State
           <select
             required

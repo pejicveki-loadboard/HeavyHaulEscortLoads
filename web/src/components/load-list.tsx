@@ -67,7 +67,7 @@ export function LoadList({ loads }: { loads: LoadRow[] }) {
     <ul className="flex flex-col gap-3">
       {loads.map((load) => (
         <li key={load.id} className="rounded border border-brand-border bg-brand-panel p-4">
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="font-semibold text-brand-text">
                 {load.originCity}, {load.originState} &rarr; {load.destinationCity},{" "}
@@ -98,24 +98,24 @@ export function LoadList({ loads }: { loads: LoadRow[] }) {
                   : ""}
               </p>
             </div>
-            <div className="flex shrink-0 gap-2">
+            <div className="flex flex-wrap gap-2.5 sm:shrink-0">
               <Link
                 href={`/dashboard/load-manager/loads/${load.id}/edit`}
-                className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22"
+                className="rounded border border-brand-border px-3 py-2 text-sm text-brand-text transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22"
               >
                 Edit
               </Link>
               <button
                 onClick={() => toggleCovered(load)}
                 disabled={busyId === load.id}
-                className="rounded border border-brand-border px-3 py-1.5 text-sm text-brand-text transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22 disabled:opacity-50 disabled:hover:bg-transparent disabled:active:scale-100"
+                className="rounded border border-brand-border px-3 py-2 text-sm text-brand-text transition-all duration-150 hover:border-brand-accent hover:bg-brand-accent/12 hover:text-brand-accent active:scale-[0.94] active:bg-brand-accent/22 disabled:opacity-50 disabled:hover:bg-transparent disabled:active:scale-100"
               >
                 {load.status === "open" ? "Mark covered" : "Reopen"}
               </button>
               <button
                 onClick={() => handleDelete(load.id)}
                 disabled={busyId === load.id}
-                className="rounded border border-red-800 px-3 py-1.5 text-sm text-red-400 transition-all duration-150 hover:border-[#e04b4b] hover:bg-[#e04b4b]/14 hover:text-[#ff9d9d] active:bg-[#e04b4b]/26 disabled:opacity-50 disabled:hover:bg-transparent"
+                className="rounded border border-red-800 px-3 py-2 text-sm text-red-400 transition-all duration-150 hover:border-[#e04b4b] hover:bg-[#e04b4b]/14 hover:text-[#ff9d9d] active:bg-[#e04b4b]/26 disabled:opacity-50 disabled:hover:bg-transparent"
               >
                 Delete
               </button>
