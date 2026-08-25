@@ -208,6 +208,11 @@ model Load {
 
   status    LoadStatus @default(open)
   createdAt DateTime   @default(now()) @map("created_at")
+  // Set whenever status transitions to `covered` (cleared back to null on
+  // reopen), so the Load Manager dashboard's "Covered this month" stat can
+  // filter on when a load was actually marked covered, not when it was
+  // posted. See PATCH /api/loads/[id].
+  coveredAt DateTime? @map("covered_at")
 
   loadAlerts LoadAlert[]
 

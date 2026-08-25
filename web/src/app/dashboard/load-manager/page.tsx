@@ -23,19 +23,17 @@ export default async function LoadManagerDashboardPage() {
   ]);
 
   const openCount = loads.filter((load) => load.status === "open").length;
-  // Interim approximation: "loads currently covered that were posted this
-  // calendar month" -- not the same as "marked covered this month", since
-  // Load has no coveredAt/updatedAt timestamp to track the actual status
-  // transition. See claude/design-handoff-notes.md entry 2 for the
-  // recommended follow-up (add a nullable coveredAt column, set it in the
-  // PATCH /api/loads/[id] handler) once there's a session with DB access to
-  // run the migration.
+  // Loads marked covered during the current calendar month, using the
+  // coveredAt timestamp set in PATCH /api/loads/[id] when a load's status
+  // transitions to "covered" (cleared back to null on reopen). Loads
+  // covered before this coveredAt column existed have no coveredAt yet and
+  // won't count here until they're toggled again.
   const now = new Date();
   const coveredThisMonthCount = loads.filter(
     (load) =>
-      load.status === "covered" &&
-      load.createdAt.getFullYear() === now.getFullYear() &&
-      load.createdAt.getMonth() === now.getMonth(),
+      load.coveredAt !== null &&
+      load.coveredAt.getFullYear() === now.getFullYear() &&
+      load.coveredAt.getMonth() === now.getMonth(),
   ).length;
 
   const loadRows: LoadRow[] = loads.map((load) => ({

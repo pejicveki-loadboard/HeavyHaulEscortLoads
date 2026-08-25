@@ -81,6 +81,17 @@ export async function PATCH(
     destinationLng = destination.lng;
   }
 
+  // Track when a load actually became covered (not just when it was
+  // posted), so the dashboard's "Covered this month" stat can filter on
+  // the real transition instead of approximating from createdAt. Cleared
+  // back to null on reopen so re-covering later gets a fresh timestamp.
+  let coveredAt = existing.coveredAt;
+  if (data.status === "covered" && existing.status !== "covered") {
+    coveredAt = new Date();
+  } else if (data.status !== undefined && data.status !== "covered" && existing.status === "covered") {
+    coveredAt = null;
+  }
+
   const updated = await prisma.load.update({
     where: { id },
     data: {
@@ -101,6 +112,7 @@ export async function PATCH(
       rate: data.rate,
       rateUnit: data.rateUnit,
       status: data.status,
+      coveredAt,
     },
   });
 
