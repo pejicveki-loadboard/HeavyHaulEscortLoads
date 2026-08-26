@@ -86,6 +86,21 @@ export function loadMatchEmail({
   };
 }
 
+export function paymentFailedEmail({ graceDays, billingUrl }: { graceDays: number; billingUrl: string }) {
+  return {
+    subject: "Action needed — your payment failed",
+    html: `
+      <p>We couldn't charge your card for your Pilot Car subscription.</p>
+      <p>
+        You'll keep full access to the load board for <strong>${graceDays} days</strong> while
+        you update your payment method. After that, access is paused until the payment goes
+        through.
+      </p>
+      <p><a href="${billingUrl}">Update your payment method</a></p>
+    `,
+  };
+}
+
 export function loadMatchSmsBody({
   originCity,
   originState,

@@ -35,13 +35,26 @@ export default async function PilotCarDashboardPage() {
       </div>
 
       <section className="rounded border border-brand-accent bg-brand-accent/10 p-4">
-        <p className="font-semibold text-brand-accent">
-          {formatSubscriptionStatus(
-            profile.subscriptionStatus,
-            profile.trialEndsAt,
-            profile.paidStartedAt
-          )}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="font-semibold text-brand-accent">
+            {formatSubscriptionStatus(
+              profile.subscriptionStatus,
+              profile.trialEndsAt,
+              profile.paidStartedAt,
+              {
+                pastDueSince: profile.pastDueSince,
+                cancelAtPeriodEnd: profile.cancelAtPeriodEnd,
+                currentPeriodEnd: profile.currentPeriodEnd,
+              }
+            )}
+          </p>
+          <Link
+            href="/dashboard/pilot-car/billing"
+            className="text-sm text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep"
+          >
+            Manage billing
+          </Link>
+        </div>
       </section>
 
       <section className="rounded border border-brand-border bg-brand-panel p-4">
@@ -92,8 +105,14 @@ export default async function PilotCarDashboardPage() {
           />
         ) : (
           <p className="text-sm text-brand-muted">
-            Your trial has ended — subscribe to keep browsing loads. (Billing isn&apos;t wired up
-            yet; check back soon.)
+            Your trial has ended —{" "}
+            <Link
+              href="/dashboard/pilot-car/billing"
+              className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep"
+            >
+              subscribe
+            </Link>{" "}
+            to keep browsing loads.
           </p>
         )}
       </section>

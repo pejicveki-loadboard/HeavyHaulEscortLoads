@@ -9,7 +9,7 @@ export default async function AdminSummaryPage() {
     prisma.pilotCarProfile.count(),
     prisma.load.count(),
     prisma.pilotCarProfile.findMany({
-      select: { subscriptionStatus: true, trialEndsAt: true },
+      select: { subscriptionStatus: true, trialEndsAt: true, pastDueSince: true },
     }),
   ]);
 
@@ -17,6 +17,7 @@ export default async function AdminSummaryPage() {
     none: 0,
     trialing: 0,
     active: 0,
+    past_due: 0,
     expired: 0,
   };
   for (const profile of pilotCarProfiles) {
@@ -57,6 +58,9 @@ export default async function AdminSummaryPage() {
           </li>
           <li>
             <strong>{breakdown.active}</strong> active
+          </li>
+          <li>
+            <strong>{breakdown.past_due}</strong> past due (grace period)
           </li>
           <li>
             <strong>{breakdown.expired}</strong> expired

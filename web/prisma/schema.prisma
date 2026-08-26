@@ -16,7 +16,20 @@ enum SubscriptionStatus {
   none
   trialing
   active
+  // Stripe reported a failed subscription invoice. Access is NOT
+  // immediately revoked -- see pastDueSince below and the 3-day grace
+  // period computed in src/lib/subscription.ts, mirroring how trial
+  // expiry is computed lazily rather than stored.
+  past_due
   expired
+}
+
+// Which of the two Phase 2 plans a PilotCarProfile is on. Null until the
+// profile actually subscribes (trial has no Stripe interaction at all --
+// "no card upfront" is satisfied by never touching Stripe until checkout).
+enum PlanInterval {
+  monthly
+  annual
 }
 
 enum LoadStatus {
@@ -133,6 +146,37 @@ model PilotCarProfile {
   // Stripe columns can exist now even though Stripe wiring is Phase 2.
   stripeCustomerId     String? @map("stripe_customer_id")
   stripeSubscriptionId String? @map("stripe_subscription_id")
+
+  // -- Phase 2 (Stripe) additions below --
+
+  // Which plan is actually billing right now. Null until the first
+  // checkout.session.completed webhook.
+  planInterval PlanInterval? @map("plan_interval")
+
+  // Set only while a monthly->annual (or annual->monthly) switch is
+  // scheduled via a Stripe Subscription Schedule and hasn't taken effect
+  // yet -- "a monthly subscriber switching to annual takes effect at the
+  // next billing cycle, not mid-cycle." Cleared by the webhook once the
+  // schedule's next phase actually starts billing (customer.subscription.updated
+  // reports the new price).
+  pendingPlanInterval PlanInterval? @map("pending_plan_interval")
+
+  // Mirrors the Stripe subscription's current_period_end -- used to show
+  // "renews/access through <date>" and to know when a scheduled plan
+  // switch or a cancel-at-period-end will land.
+  currentPeriodEnd DateTime? @map("current_period_end")
+
+  // True once the user has requested cancellation; the subscription (and
+  // load-board access) still runs through currentPeriodEnd -- no refund,
+  // access kept through the paid term, same rule for monthly and annual.
+  cancelAtPeriodEnd Boolean @default(false) @map("cancel_at_period_end")
+
+  // Set to the timestamp of the first invoice.payment_failed for the
+  // current billing cycle; cleared on invoice.payment_succeeded. Access is
+  // still granted while now() - pastDueSince <= 3 days (the grace period)
+  // -- see GRACE_PERIOD_DAYS in src/lib/subscription.ts. Null means no
+  // outstanding payment failure.
+  pastDueSince DateTime? @map("past_due_since")
 
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   searchLocations SearchLocation[]
