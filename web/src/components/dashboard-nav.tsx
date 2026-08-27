@@ -37,7 +37,7 @@ export function DashboardNav({
         <Image
           src="/logo-horizontal.png"
           alt="HeavyHaul Escort Loads"
-          width={232}
+          width={210}
           height={80}
           className="h-20 w-auto"
           priority
