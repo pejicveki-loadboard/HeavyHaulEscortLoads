@@ -41,9 +41,9 @@ export default function LoginPage() {
       <div className="flex w-full flex-col justify-center gap-6 p-6 md:w-1/2">
         <div className="mx-auto flex w-full max-w-sm flex-col gap-6">
           <Image
-            src="/logo-horizontal.png"
+            src="/logo-horizontal-login.png"
             alt="HeavyHaul Escort Loads"
-            width={126}
+            width={139}
             height={48}
             className="w-full h-auto self-start"
             priority
