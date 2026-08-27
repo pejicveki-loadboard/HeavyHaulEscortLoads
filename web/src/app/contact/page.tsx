@@ -27,6 +27,13 @@ export default function ContactPage() {
           Questions, feedback, or something not working right? Send us a message and we&apos;ll
           get back to you.
         </p>
+        <p className="text-sm text-brand-muted">
+          Vedran Pejic, Operational Manager — reachable at{" "}
+          <a href="mailto:info@heavyhaulescortloads.com" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
+            info@heavyhaulescortloads.com
+          </a>
+          .
+        </p>
       </div>
 
       <div className="rounded-lg border border-brand-border bg-brand-panel p-6">
