@@ -1,6 +1,15 @@
 # Phase 1 MVP — Week-by-Week Build Plan
 *Pilot Car Load Board — for handing to a Claude Code session*
 
+> **Status update (2026-08-28):** Phase 1 (Weeks 1–3) and Phase 2 (Stripe
+> billing, commit a499fd9) are both complete. Stripe was independently
+> verified live end-to-end on 2026-08-28 — real checkout, all 5 webhook
+> events, and the 3-day past-due grace period all confirmed against the real
+> Stripe test-mode API, not just read through. Twilio SMS A2P 10DLC
+> registration is still in review as of 2026-08-28 — TWILIO_SMS_LIVE stays
+> false until that clears. Remaining pre-launch work is tracked in
+> PHASE3_PLAN.md, not here.
+
 Scope: single-login auth with multiple roles per account, post a load, browse/filter load board **with basic origin+radius search**, contact reveal gated by paid/trial status, real-time email + SMS alerts fired the moment a matching load posts, **and a built-in admin dashboard for tracking signups, loads, and trial/subscription status (added 2026-08-19).** Corridor matching, dimension-based auto-flagging, and verified cert badges are still deliberately deferred past launch — see the project summary's Strategy Decision.
 
 Target: **$14.99/mo, 200 paying subscribers.** Positioning is simpler + cheaper than the incumbents, not more features.
