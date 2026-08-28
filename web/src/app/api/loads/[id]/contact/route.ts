@@ -2,11 +2,15 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { hasLoadBoardAccess } from "@/lib/subscription";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { allowed, retryAfterSeconds } = await checkRateLimit("contact-reveal", getClientIp(request));
+  if (!allowed) return rateLimitResponse(retryAfterSeconds);
+
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });

@@ -295,3 +295,18 @@ model LoadAlert {
   @@unique([loadId, searchLocationId, channel])
   @@map("load_alerts")
 }
+
+// Fixed-window IP rate limiting for public endpoints (signup, login,
+// contact-reveal) -- see src/lib/rate-limit.ts. Postgres-backed instead of
+// in-memory/Redis: this app runs on Vercel's serverless model, so counters
+// have to live somewhere shared across function instances, and there's no
+// existing cache layer to justify adding one just for this. key encodes
+// both the scope and the identifier (e.g. "login:203.0.113.4") so every
+// endpoint's counter is independent.
+model RateLimitHit {
+  key         String   @id
+  windowStart DateTime @map("window_start")
+  count       Int      @default(0)
+
+  @@map("rate_limit_hits")
+}

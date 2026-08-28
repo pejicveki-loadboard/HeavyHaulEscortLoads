@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/resend";
 import { verificationEmail } from "@/lib/email-templates";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 const VERIFICATION_TOKEN_TTL_HOURS = 24;
 
@@ -14,6 +15,9 @@ const signupSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const { allowed, retryAfterSeconds } = await checkRateLimit("signup", getClientIp(request));
+  if (!allowed) return rateLimitResponse(retryAfterSeconds);
+
   const body = await request.json().catch(() => null);
   const parsed = signupSchema.safeParse(body);
   if (!parsed.success) {

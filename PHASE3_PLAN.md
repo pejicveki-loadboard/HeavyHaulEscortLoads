@@ -47,10 +47,14 @@ fixed/sliding-window counter over adding Redis/Upstash at this scale,
 unless there's already a reason to add a cache layer. No in-memory-only
 limiter — it won't be shared across Vercel's serverless instances.
 IP-based is enough for launch.
-- [ ] Pick the storage approach, confirm it actually works on Vercel's
-      serverless model
-- [ ] Apply to signup, login, contact-reveal
-- [ ] Manually verify hitting the limit returns a real 429
+- [x] Pick the storage approach, confirm it actually works on Vercel's
+      serverless model -- Postgres-backed fixed-window counter
+      (RateLimitHit table, atomic INSERT ... ON CONFLICT), see
+      src/lib/rate-limit.ts
+- [x] Apply to signup, login, contact-reveal (login is intercepted in
+      the [...nextauth] catch-all route, before NextAuth's own handler --
+      authorize() can't itself make NextAuth return a real 429)
+- [x] Manually verify hitting the limit returns a real 429
 
 ## Task 4 — Seed realistic test data
 PHASE1_PLAN.md's Week 3 called for ~20-30 realistic loads with real
