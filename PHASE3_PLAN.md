@@ -29,9 +29,13 @@ AlertSendStatus enum and the retry-limit logic — this wasn't fully
 resolved from a static read). Then add a count to the admin summary view
 and a table for investigating individual failures (load, search location,
 channel, attempts, last attempt time).
-- [ ] Confirm how a permanently-failed alert is stored/detected
-- [ ] Add it to the admin summary counts
-- [ ] Add a table/list view for investigating individual failures
+- [x] Confirm how a permanently-failed alert is stored/detected -- there's no
+      dedicated status; it's `LoadAlert.status = 'failed' AND attempts >=
+      MAX_ATTEMPTS` (2), exported from load-matching.ts as the single
+      source of truth for that threshold
+- [x] Add it to the admin summary counts
+- [x] Add a table/list view for investigating individual failures
+      (/admin/failed-alerts)
 
 ## Task 3 — Baseline rate limiting on public endpoints
 Nothing does this today (deliberately deferred in Phase 1). Before any

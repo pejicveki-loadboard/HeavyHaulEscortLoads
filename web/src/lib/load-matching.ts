@@ -9,8 +9,11 @@ import { normalizePhoneToE164 } from "@/lib/phone";
 import { loadMatchEmail, loadMatchSmsBody } from "@/lib/email-templates";
 
 // A row is claimed (inserted) then retried at most once, so the highest
-// legitimate attempts value is 2 (initial + one retry).
-const MAX_ATTEMPTS = 2;
+// legitimate attempts value is 2 (initial + one retry). A row is
+// "permanently failed" -- worth surfacing to admins -- once it's stuck at
+// status=failed with attempts >= MAX_ATTEMPTS; see the admin failed-alerts
+// page, which imports this rather than hardcoding 2 a second time.
+export const MAX_ATTEMPTS = 2;
 
 type MatchRow = {
   search_location_id: string;
@@ -204,8 +207,7 @@ async function retryFailedAlerts(pending: PendingRetry[], load: LoadForAlert): P
         where: { id: alertId },
         data: { attempts: { increment: 1 } },
       });
-      // TODO(Week 3): surface permanently-failed alerts somewhere visible
-      // (e.g. the admin dashboard) instead of just this log line.
+      // Surfaced in the admin dashboard too -- see /admin/failed-alerts.
       console.error(
         `Alert permanently failed after retry: loadId=${load.id} searchLocationId=${match.search_location_id} channel=${channel}`
       );

@@ -1,16 +1,19 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { effectiveSubscriptionStatus } from "@/lib/subscription";
-import { SubscriptionStatus } from "@/generated/prisma/enums";
+import { MAX_ATTEMPTS } from "@/lib/load-matching";
+import { AlertSendStatus, SubscriptionStatus } from "@/generated/prisma/enums";
 import { BuildingIcon, CarIcon, TruckIcon } from "@/components/icons";
 
 export default async function AdminSummaryPage() {
-  const [loadManagerCount, pilotCarCount, loadCount, pilotCarProfiles] = await Promise.all([
+  const [loadManagerCount, pilotCarCount, loadCount, pilotCarProfiles, failedAlertCount] = await Promise.all([
     prisma.loadManagerProfile.count(),
     prisma.pilotCarProfile.count(),
     prisma.load.count(),
     prisma.pilotCarProfile.findMany({
       select: { subscriptionStatus: true, trialEndsAt: true, pastDueSince: true },
     }),
+    prisma.loadAlert.count({ where: { status: AlertSendStatus.failed, attempts: { gte: MAX_ATTEMPTS } } }),
   ]);
 
   const breakdown: Record<SubscriptionStatus, number> = {
@@ -69,6 +72,16 @@ export default async function AdminSummaryPage() {
             <strong>{breakdown.none}</strong> none
           </li>
         </ul>
+      </div>
+
+      <div className="rounded border border-brand-border bg-brand-panel p-4">
+        <h2 className="mb-2 font-semibold text-brand-text">Load alerts</h2>
+        <p className="text-sm text-brand-text">
+          <Link href="/admin/failed-alerts" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
+            <strong>{failedAlertCount}</strong> permanently failed
+          </Link>{" "}
+          <span className="text-brand-muted">(exhausted retry -- driver never got notified)</span>
+        </p>
       </div>
     </div>
   );

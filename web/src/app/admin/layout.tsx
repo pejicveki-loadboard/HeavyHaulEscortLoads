@@ -35,6 +35,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin/loads" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             Loads
           </Link>
+          <Link href="/admin/failed-alerts" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
+            Failed alerts
+          </Link>
           <Link href="/dashboard" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             &larr; Back to dashboard
           </Link>
