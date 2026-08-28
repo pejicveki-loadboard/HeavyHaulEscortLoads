@@ -8,9 +8,11 @@ import { PilotCarProfileForm } from "@/components/pilot-car-profile-form";
 export function OnboardingForm({
   hasLoadManagerProfile,
   hasPilotCarProfile,
+  initialPhone,
 }: {
   hasLoadManagerProfile: boolean;
   hasPilotCarProfile: boolean;
+  initialPhone?: string;
 }) {
   const router = useRouter();
   const [wantsLoadManager, setWantsLoadManager] = useState(false);
@@ -65,7 +67,10 @@ export function OnboardingForm({
       )}
 
       {wantsPilotCar && (
-        <PilotCarProfileForm onCreated={() => setCreatedPilotCar(true)} />
+        <PilotCarProfileForm
+          onCreated={() => setCreatedPilotCar(true)}
+          initialValues={initialPhone ? { companyName: "", phone: initialPhone } : undefined}
+        />
       )}
     </div>
   );

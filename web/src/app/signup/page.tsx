@@ -11,6 +11,8 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [smsConsent, setSmsConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -28,7 +30,12 @@ export default function SignupPage() {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          email,
+          password,
+          phone: phone || undefined,
+          smsConsent,
+        }),
       });
       const data = await res.json();
 
@@ -100,6 +107,45 @@ export default function SignupPage() {
             className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
           />
         </label>
+
+        <div className="flex flex-col gap-2 rounded border border-brand-border bg-brand-panel p-3">
+          <label className="flex flex-col gap-1 text-sm">
+            Phone number <span className="text-brand-muted">(optional, Pilot Car Companies only)</span>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="(555) 555-5555"
+              className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
+            />
+          </label>
+          <label className="flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={smsConsent}
+              onChange={(e) => setSmsConsent(e.target.checked)}
+              className="mt-0.5"
+            />
+            <span>
+              Yes, I&apos;d like to receive automated text messages from HeavyHaul Escort
+              Loads about load matches (HeavyHaul Escort Loads Load-Match SMS Alerts). Message
+              frequency varies based on how many loads match. Msg &amp; data rates may apply.
+              <br />
+              <span className="text-brand-muted">
+                Reply HELP for help, STOP to cancel anytime. See our{" "}
+                <Link href="/terms" target="_blank" className="text-brand-accent underline">
+                  Terms of Use
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" target="_blank" className="text-brand-accent underline">
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </span>
+          </label>
+        </div>
+
         {error && <p className="text-sm text-red-400">{error}</p>}
         <button
           type="submit"

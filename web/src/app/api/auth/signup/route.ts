@@ -12,6 +12,10 @@ const VERIFICATION_TOKEN_TTL_HOURS = 24;
 const signupSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
   password: z.string().min(8, "Password must be at least 8 characters."),
+  // Both optional -- the SMS opt-in section on /signup is not required to
+  // create an account. smsConsent true without a phone is just ignored.
+  phone: z.string().trim().min(1).optional(),
+  smsConsent: z.boolean().optional(),
 });
 
 export async function POST(request: Request) {
@@ -26,7 +30,7 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
-  const { email, password } = parsed.data;
+  const { email, password, phone, smsConsent } = parsed.data;
 
   // Fixed per ultrareview bug_003: this used to return a distinct 409 for a
   // taken email, letting anyone enumerate registered accounts. Every branch
@@ -69,6 +73,12 @@ export async function POST(request: Request) {
         passwordHash,
         emailVerificationToken: verificationToken,
         emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
+        // Only set on brand-new accounts -- same reasoning as passwordHash
+        // above: this endpoint is unauthenticated, so an "existing but
+        // unverified" resubmission must never overwrite fields the original
+        // requester already set.
+        phone: phone || null,
+        smsConsentedAt: smsConsent && phone ? new Date() : null,
       },
     });
   }

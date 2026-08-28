@@ -92,6 +92,15 @@ model User {
   emailVerificationToken          String?   @unique @map("email_verification_token")
   emailVerificationTokenExpiresAt DateTime? @map("email_verification_token_expires_at")
 
+  // Added 2026-08-28 so the public signup page (unauthenticated, unlike
+  // onboarding) can collect a phone number + SMS opt-in directly -- this is
+  // what Twilio's A2P 10DLC reviewer needs to find without logging in. Both
+  // are optional and just a holding spot until a PilotCarProfile exists;
+  // PilotCarProfile creation copies smsConsentedAt onto its own column so
+  // the actual product feature has its own durable consent record.
+  phone          String?   @map("phone")
+  smsConsentedAt DateTime? @map("sms_consented_at")
+
   loadManagerProfile LoadManagerProfile?
   pilotCarProfile    PilotCarProfile?
 
@@ -132,6 +141,11 @@ model PilotCarProfile {
   userId      String @unique @map("user_id")
   companyName String @map("company_name")
   phone       String
+
+  // Copied from User.smsConsentedAt at creation time (if the signup-page
+  // opt-in was checked) -- this is the durable consent record for this
+  // profile specifically, independent of whatever the User row later does.
+  smsConsentedAt DateTime? @map("sms_consented_at")
 
   // "signed up" for admin-visibility purposes
   createdAt DateTime @default(now()) @map("created_at")

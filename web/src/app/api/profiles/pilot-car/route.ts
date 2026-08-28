@@ -41,11 +41,21 @@ export async function POST(request: Request) {
   const trialEndsAt = new Date(now);
   trialEndsAt.setDate(trialEndsAt.getDate() + TRIAL_LENGTH_DAYS);
 
+  // Carry over the signup-page SMS opt-in (if any) as this profile's own
+  // durable consent record -- read from the User row rather than trusting
+  // anything the client sends here, since consent itself was already
+  // captured at signup and shouldn't be re-grantable via this endpoint.
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { smsConsentedAt: true },
+  });
+
   const profile = await prisma.pilotCarProfile.create({
     data: {
       userId: session.user.id,
       companyName: parsed.data.companyName,
       phone: parsed.data.phone,
+      smsConsentedAt: user?.smsConsentedAt ?? null,
       subscriptionStatus: SubscriptionStatus.trialing,
       trialStartedAt: now,
       trialEndsAt,

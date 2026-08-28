@@ -7,9 +7,13 @@ export default async function OnboardingPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [loadManagerProfile, pilotCarProfile] = await Promise.all([
+  const [loadManagerProfile, pilotCarProfile, user] = await Promise.all([
     prisma.loadManagerProfile.findUnique({ where: { userId: session.user.id } }),
     prisma.pilotCarProfile.findUnique({ where: { userId: session.user.id } }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { phone: true },
+    }),
   ]);
 
   if (loadManagerProfile && pilotCarProfile) {
@@ -25,6 +29,7 @@ export default async function OnboardingPage() {
       <OnboardingForm
         hasLoadManagerProfile={!!loadManagerProfile}
         hasPilotCarProfile={!!pilotCarProfile}
+        initialPhone={user?.phone ?? undefined}
       />
     </main>
   );
