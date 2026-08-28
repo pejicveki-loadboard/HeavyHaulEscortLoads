@@ -74,10 +74,9 @@ dimensions/weights/dates.
       a Miami search correctly returned zero (nothing seeded nearby)
 
 ## Also while you're in there
-- [ ] Rotate STRIPE_SECRET_KEY in .env — it's currently the value borrowed
-      from the Stripe CLI's cached credential during the 2026-08-28
-      verification session. Generate a real standing sk_test_ key from
-      the Stripe dashboard (Developers → API keys) instead.
+- [x] Rotate STRIPE_SECRET_KEY in .env — done 2026-08-28, real standing
+      sk_test_ key from the Stripe dashboard, verified live against the
+      account's actual Monthly/Annual prices.
 
 Commit each task separately as it's finished, same as the rest of this
 repo's history. Check boxes off in this file as you go, and commit the
