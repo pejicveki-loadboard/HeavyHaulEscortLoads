@@ -64,9 +64,14 @@ scripts/setup-stripe-products.mjs: standalone, idempotent, safe to
 re-run), using hardcoded real-city coordinates rather than burning Mapbox
 API calls, spanning the 7 escort-position types and a spread of
 dimensions/weights/dates.
-- [ ] Write the seed script
-- [ ] Run it against the dev database
-- [ ] Confirm radius search returns a varied, sensible result set
+- [x] Write the seed script (scripts/seed-loads.mjs, `npm run seed:loads`)
+- [x] Run it against the dev database -- 27 loads across 16 states,
+      attached to a dedicated seed Load Manager account; re-run confirmed
+      idempotent (clears + recreates the same 27 rather than duplicating)
+- [x] Confirm radius search returns a varied, sensible result set -- ran
+      the actual browse query (via the real Mapbox geocoder) from Dallas,
+      Atlanta, and Chicago: correct distance sorting, sensible counts, and
+      a Miami search correctly returned zero (nothing seeded nearby)
 
 ## Also while you're in there
 - [ ] Rotate STRIPE_SECRET_KEY in .env — it's currently the value borrowed
