@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Terms of Use for HeavyHaul Escort Loads.",
 };
 
-const EFFECTIVE_DATE = "August 23, 2026";
+const EFFECTIVE_DATE = "August 28, 2026";
 
 const TERMS_MD = `# Terms of Use
 
@@ -88,7 +88,21 @@ These Terms are governed by the laws of the State of Minnesota, without regard t
 
 We may update these terms from time to time. Material changes will be posted on this page with an updated effective date.
 
-## 11. Contact
+## 11. Text Messaging (SMS) Program
+
+Pilot Car Company users may opt in to receive automated text message alerts ("HeavyHaul Escort Loads Load-Match SMS Alerts") for loads matching a saved search location. Opt-in happens from within your authenticated account, on the Search Locations page of your dashboard — each saved search location has its own SMS alert checkbox, unchecked by default, with the consent language shown directly beside it. Email alerts remain available with no SMS consent required, and SMS alerts are never required to use the Platform.
+
+- **What you're opting into:** automated text messages from HeavyHaul Escort Loads about load matches for that search location.
+- **How you opt in:** check the SMS alerts box for a saved search location while logged in to your Pilot Car Company account. Consent is given separately for each search location.
+- **Message frequency:** recurring; varies based on how many loads match your saved search criteria.
+- **Message and data rates may apply.**
+- **Opt out:** reply STOP (also CANCEL, QUIT, UNSUBSCRIBE, STOPALL, REVOKE, or END) to any message to stop SMS alerts to that number at any time. Reply START to resume.
+- **Help:** reply HELP to any message, or contact info@heavyhaulescortloads.com.
+- No mobile information is shared with third parties or affiliates for their marketing or promotional purposes.
+
+See our [Privacy Policy](/privacy) for how we handle your phone number and other information.
+
+## 12. Contact
 
 Questions about these terms: info@heavyhaulescortloads.com, or see our [Contact page](/contact).
 

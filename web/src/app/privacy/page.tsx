@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Privacy Policy for HeavyHaul Escort Loads.",
 };
 
-const EFFECTIVE_DATE = "August 23, 2026";
+const EFFECTIVE_DATE = "August 28, 2026";
 
 const PRIVACY_MD = `# Privacy Policy
 
@@ -55,7 +55,7 @@ We do not sell your personal information.
 
 We do not share your information with these providers for their own marketing purposes.
 
-**Text message (SMS) alerts.** If you opt in to SMS load-match alerts, we use your phone number only to send those alerts through Twilio. We do not sell or share your mobile number with any third party for their own marketing purposes. Message frequency varies based on how many loads match your saved search criteria. Message and data rates may apply. Reply HELP for help or STOP to cancel at any time.
+**Text message (SMS) alerts.** If you opt in to SMS load-match alerts ("HeavyHaul Escort Loads Load-Match SMS Alerts"), we use your phone number only to send those alerts through Twilio. Opt-in happens from within your authenticated Pilot Car Company account, on the Search Locations page, via a per-search-location consent checkbox that is unchecked by default. We do not sell or share your mobile number with any third party for their own marketing purposes. Message frequency is recurring and varies based on how many loads match your saved search criteria. Message and data rates may apply. Reply HELP for help or STOP to cancel at any time — see our [Terms of Use](/terms) for the full program terms.
 
 **When required by law**, or to protect the rights, safety, or property of HeavyHaul Escort Loads, our users, or the public.
 
