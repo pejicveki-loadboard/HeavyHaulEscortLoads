@@ -24,36 +24,50 @@ export async function POST(request: Request) {
   }
   const { email, password } = parsed.data;
 
-  // TODO: this 409 lets an unauthenticated caller enumerate registered
-  // emails (unlike login, which returns a generic error either way).
-  // Email verification (added 2026-08-21) gives this a real fix path now:
-  // return the same generic "check your email" response regardless of
-  // whether the email was taken, and gate account activation on the
-  // verification link instead -- that's a separate, deliberate change to
-  // the signup response shape that hasn't been made yet. See ultrareview
-  // finding bug_003.
+  // Fixed per ultrareview bug_003: this used to return a distinct 409 for a
+  // taken email, letting anyone enumerate registered accounts. Every branch
+  // below now returns this exact same response -- new email, already
+  // registered-and-unverified, or already registered-and-verified are all
+  // indistinguishable from outside.
+  const genericResponse = () =>
+    NextResponse.json({ message: "Check your email to verify your account." }, { status: 200 });
+
   const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
-    return NextResponse.json(
-      { error: "An account with that email already exists." },
-      { status: 409 }
-    );
+
+  if (existing?.emailVerifiedAt) {
+    // Already registered and verified -- do nothing (no email, no write),
+    // but still return the generic response.
+    return genericResponse();
   }
 
-  const passwordHash = await bcrypt.hash(password, 12);
   const verificationToken = crypto.randomBytes(32).toString("hex");
   const verificationTokenExpiresAt = new Date(
     Date.now() + VERIFICATION_TOKEN_TTL_HOURS * 60 * 60 * 1000
   );
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      passwordHash,
-      emailVerificationToken: verificationToken,
-      emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
-    },
-  });
+  if (existing) {
+    // Registered but never verified -- resend the verification email only.
+    // Never touch passwordHash here: this endpoint is unauthenticated, so
+    // overwriting it would let anyone hijack someone else's pending signup
+    // just by "signing up" again with a password of their choosing.
+    await prisma.user.update({
+      where: { id: existing.id },
+      data: {
+        emailVerificationToken: verificationToken,
+        emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
+      },
+    });
+  } else {
+    const passwordHash = await bcrypt.hash(password, 12);
+    await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        emailVerificationToken: verificationToken,
+        emailVerificationTokenExpiresAt: verificationTokenExpiresAt,
+      },
+    });
+  }
 
   const verifyUrl = `${process.env.APP_BASE_URL}/api/auth/verify-email?token=${verificationToken}`;
   try {
@@ -65,5 +79,5 @@ export async function POST(request: Request) {
     console.error("Failed to send verification email:", error);
   }
 
-  return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
+  return genericResponse();
 }

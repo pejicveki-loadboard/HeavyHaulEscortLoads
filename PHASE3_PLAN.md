@@ -15,10 +15,10 @@ whether the email is new or already registered-and-unverified (fine to
 resend the verification email in that case); for an existing
 already-verified email, send nothing but return the identical response.
 The API response must never reveal which case happened.
-- [ ] Update the signup route
-- [ ] Confirm status code + body are byte-identical for a new email vs. an
+- [x] Update the signup route
+- [x] Confirm status code + body are byte-identical for a new email vs. an
       existing verified email
-- [ ] Remove the TODO comment once fixed
+- [x] Remove the TODO comment once fixed
 
 ## Task 2 — Surface permanently-failed load alerts in the admin dashboard
 load-matching.ts tracks retry attempts and console.errors when an alert
