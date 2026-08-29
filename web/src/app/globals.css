@@ -59,3 +59,43 @@ h4 {
 input[type="date"] {
   color-scheme: dark;
 }
+
+/* Required-field affordance (added 2026-08-29): every form across the app
+   already marks its truly-required inputs/selects with the native
+   `required` attribute (load post, search location, browse search,
+   signup, login, contact, profile forms) -- so hooking off `:required`
+   here gives every one of them the lighter-neutral treatment
+   automatically, without editing each form's className individually, and
+   any required field added later picks it up for free.
+   At rest: a slightly lighter neutral than the normal panel/border --
+   no new hue, just a touch of the text color mixed in, so it reads as
+   "fill this in" while scanning without competing with the accent color
+   used for buttons/links. Excludes checkboxes/radios since none are
+   marked required today (group selections like escort positions are
+   validated separately) and a lightened checkbox would look like a
+   state, not a prompt.
+   This lives outside any Tailwind layer, so it overrides each input's
+   utility-class border/background (Tailwind v4 puts those in the
+   `utilities` layer, and unlayered rules always win over layered ones,
+   regardless of selector specificity). */
+input:required:not([type="checkbox"]):not([type="radio"]),
+select:required {
+  background-color: color-mix(in srgb, var(--color-brand-text) 5%, var(--color-brand-panel));
+  border-color: color-mix(in srgb, var(--color-brand-text) 16%, var(--color-brand-border));
+}
+
+/* Focus state, every text/select/textarea field (required or not): the
+   accent-tinted look originally tried as the required-field's resting
+   color instead lives here, so whichever field currently has focus is
+   unmistakable -- background and border both shift to the accent, plus a
+   soft ring for visibility beyond just the border. outline is suppressed
+   only because this replaces it with an equally visible custom
+   indicator, not removed outright. */
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  background-color: color-mix(in srgb, var(--color-brand-accent) 10%, var(--color-brand-panel));
+  border-color: var(--color-brand-accent);
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-brand-accent) 35%, transparent);
+}
