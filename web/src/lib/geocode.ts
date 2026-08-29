@@ -1,9 +1,17 @@
-export type GeocodeResult = { lat: number; lng: number };
+export type GeocodeResult = { lat: number; lng: number; city: string };
 
 // Geocodes a US city/state to coordinates via Mapbox. Returns null if no
 // match is found (caller should treat that as a validation error, not
 // silently save a load with missing coordinates -- it would never surface
 // in radius search).
+//
+// The returned `city` is Mapbox's canonical spelling/capitalization for the
+// matched place (feature.text, e.g. "Austin"), not whatever the caller typed
+// -- callers should store this instead of the raw input so "astin, mn" (or
+// "AUSTIN, MN") ends up saved and displayed as "Austin, MN" rather than
+// verbatim. Falls back to the raw input in the (never-observed-in-testing)
+// case Mapbox returns a match with no `text` field, so a save never fails
+// over this.
 export async function geocodeCityState(
   city: string,
   state: string
@@ -34,5 +42,5 @@ export async function geocodeCityState(
   if (feature.relevance < 0.99) return null;
 
   const [lng, lat] = feature.center as [number, number];
-  return { lat, lng };
+  return { lat, lng, city: typeof feature.text === "string" && feature.text ? feature.text : city };
 }

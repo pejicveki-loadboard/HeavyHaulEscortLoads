@@ -93,11 +93,14 @@ export async function POST(request: Request) {
   const load = await prisma.load.create({
     data: {
       postedById: profile.id,
-      originCity: data.originCity,
+      // Store Mapbox's canonical spelling/capitalization, not the raw
+      // input -- see geocode.ts. State is already constrained to a valid
+      // two-letter code by the form's <select>, so only city needs this.
+      originCity: origin.city,
       originState: data.originState,
       originLat: origin.lat,
       originLng: origin.lng,
-      destinationCity: data.destinationCity,
+      destinationCity: destination.city,
       destinationState: data.destinationState,
       destinationLat: destination.lat,
       destinationLng: destination.lng,

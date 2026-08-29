@@ -47,6 +47,7 @@ export async function PATCH(
     );
   }
 
+  let city = parsed.data.city;
   let lat = existing.lat;
   let lng = existing.lng;
   const cityOrStateChanged =
@@ -61,6 +62,9 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    // Mapbox's canonical spelling/capitalization, not the raw input -- see
+    // geocode.ts.
+    city = geocoded.city;
     lat = geocoded.lat;
     lng = geocoded.lng;
   }
@@ -69,7 +73,7 @@ export async function PATCH(
     where: { id },
     data: {
       label: parsed.data.label || null,
-      city: parsed.data.city,
+      city,
       state: parsed.data.state,
       lat,
       lng,

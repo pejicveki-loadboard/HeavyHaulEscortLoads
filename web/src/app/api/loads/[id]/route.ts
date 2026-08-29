@@ -49,6 +49,11 @@ export async function PATCH(
     );
   }
 
+  // originCity/destinationCity below default to the raw parsed value (only
+  // relevant if geocoding is skipped entirely, which can't actually happen
+  // given the `if` guards) and are overwritten with Mapbox's canonical
+  // spelling/capitalization once geocoding runs -- see geocode.ts.
+  let originCity = data.originCity;
   let originLat = existing.originLat;
   let originLng = existing.originLng;
   if (data.originCity !== undefined || data.originState !== undefined) {
@@ -61,10 +66,12 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    originCity = origin.city;
     originLat = origin.lat;
     originLng = origin.lng;
   }
 
+  let destinationCity = data.destinationCity;
   let destinationLat = existing.destinationLat;
   let destinationLng = existing.destinationLng;
   if (data.destinationCity !== undefined || data.destinationState !== undefined) {
@@ -77,6 +84,7 @@ export async function PATCH(
         { status: 400 }
       );
     }
+    destinationCity = destination.city;
     destinationLat = destination.lat;
     destinationLng = destination.lng;
   }
@@ -95,11 +103,11 @@ export async function PATCH(
   const updated = await prisma.load.update({
     where: { id },
     data: {
-      originCity: data.originCity,
+      originCity,
       originState: data.originState,
       originLat,
       originLng,
-      destinationCity: data.destinationCity,
+      destinationCity,
       destinationState: data.destinationState,
       destinationLat,
       destinationLng,

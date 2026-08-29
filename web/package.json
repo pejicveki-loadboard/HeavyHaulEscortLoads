@@ -9,7 +9,8 @@
     "lint": "eslint",
     "postinstall": "prisma generate",
     "stripe:setup": "node scripts/setup-stripe-products.mjs",
-    "seed:loads": "tsx scripts/seed-loads.mjs"
+    "seed:loads": "tsx scripts/seed-loads.mjs",
+    "backfill:city-names": "tsx scripts/backfill-city-names.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",

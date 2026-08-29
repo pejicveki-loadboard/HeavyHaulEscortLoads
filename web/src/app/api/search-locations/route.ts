@@ -56,7 +56,9 @@ export async function POST(request: Request) {
     data: {
       profileId: profile.id,
       label: parsed.data.label || null,
-      city: parsed.data.city,
+      // Mapbox's canonical spelling/capitalization, not the raw input --
+      // see geocode.ts.
+      city: geocoded.city,
       state: parsed.data.state,
       lat: geocoded.lat,
       lng: geocoded.lng,
