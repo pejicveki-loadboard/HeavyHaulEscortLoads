@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ESCORT_POSITIONS } from "@/lib/escort-positions";
 import { US_STATES } from "@/lib/us-states";
 import type { EscortPosition } from "@/generated/prisma/enums";
@@ -26,7 +26,7 @@ type BrowseResult = {
   rate: number | null;
   rateUnit: string | null;
   postedByCompanyName: string;
-  distanceMiles: number;
+  distanceMiles: number | null;
 };
 
 function positionLabels(positions: EscortPosition[]) {
@@ -35,7 +35,15 @@ function positionLabels(positions: EscortPosition[]) {
     .join(", ");
 }
 
-export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLocation[] }) {
+export function BrowseLoadsPanel({
+  savedLocations,
+  initialLoadId,
+  initialSearchLocationId,
+}: {
+  savedLocations: SavedLocation[];
+  initialLoadId?: string;
+  initialSearchLocationId?: string;
+}) {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [radiusMiles, setRadiusMiles] = useState("150");
@@ -44,9 +52,32 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
   const [dateTo, setDateTo] = useState("");
   const [results, setResults] = useState<BrowseResult[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(Boolean(initialLoadId));
   const [revealed, setRevealed] = useState<Record<string, string>>({});
   const [revealingId, setRevealingId] = useState<string | null>(null);
+
+  // Lands here from an SMS/email alert link -- fetch and show that exact
+  // load immediately instead of making the user pick a saved location and
+  // search manually (see load-matching.ts's loadUrl construction). `loading`
+  // starts true from initialLoadId above rather than being set here, so
+  // every setState below runs inside the fetch callback, not synchronously
+  // in the effect body.
+  useEffect(() => {
+    if (!initialLoadId) return;
+    const params = new URLSearchParams();
+    if (initialSearchLocationId) params.set("searchLocationId", initialSearchLocationId);
+    const qs = params.toString();
+    fetch(`/api/loads/${initialLoadId}${qs ? `?${qs}` : ""}`)
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error ?? "Couldn't load that alert.");
+          return;
+        }
+        setResults([data.result]);
+      })
+      .finally(() => setLoading(false));
+  }, [initialLoadId, initialSearchLocationId]);
 
   function togglePosition(value: EscortPosition) {
     setPositions((prev) =>
@@ -219,9 +250,11 @@ export function BrowseLoadsPanel({ savedLocations }: { savedLocations: SavedLoca
               <p className="font-semibold text-brand-text">
                 {load.originCity}, {load.originState} &rarr; {load.destinationCity},{" "}
                 {load.destinationState}
-                <span className="ml-2 text-sm font-normal text-brand-muted">
-                  {load.distanceMiles} mi away
-                </span>
+                {load.distanceMiles !== null && (
+                  <span className="ml-2 text-sm font-normal text-brand-muted">
+                    {load.distanceMiles} mi away
+                  </span>
+                )}
               </p>
               <p className="text-sm text-brand-muted">
                 {new Date(load.date).toLocaleDateString()} · {positionLabels(load.escortPositions)}

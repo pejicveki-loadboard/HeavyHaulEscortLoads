@@ -274,6 +274,15 @@ model Load {
   // posted. See PATCH /api/loads/[id].
   coveredAt DateTime? @map("covered_at")
 
+  // Incremented (never reset) specifically on a covered -> open transition
+  // -- see PATCH /api/loads/[id]. Stamped onto each LoadAlert row created
+  // for this load (see matchAndAlertLoad) so reopening fires fresh alerts
+  // for everyone already alerted the first time around, without deleting
+  // the prior LoadAlert rows -- the Load Manager dashboard's "X
+  // notifications sent" stat is a plain count() over that table, and
+  // deleting rows on reopen would silently corrupt it.
+  alertCycle Int @default(1) @map("alert_cycle")
+
   loadAlerts LoadAlert[]
 
   @@map("loads")
@@ -302,11 +311,16 @@ model LoadAlert {
   status           AlertSendStatus @default(failed)
   attempts         Int             @default(0)
   sentAt           DateTime        @default(now()) @map("sent_at")
+  // Copied from Load.alertCycle at creation time -- part of the dedupe key
+  // so a covered -> open reopen (which bumps the load's alertCycle) gets a
+  // fresh (load, location, channel) slot to claim instead of colliding with
+  // the prior cycle's already-sent row. See Load.alertCycle.
+  alertCycle Int @default(1) @map("alert_cycle")
 
   load           Load           @relation(fields: [loadId], references: [id], onDelete: Cascade)
   searchLocation SearchLocation @relation(fields: [searchLocationId], references: [id], onDelete: Cascade)
 
-  @@unique([loadId, searchLocationId, channel])
+  @@unique([loadId, searchLocationId, channel, alertCycle])
   @@map("load_alerts")
 }
 

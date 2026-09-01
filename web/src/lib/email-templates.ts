@@ -1,4 +1,5 @@
 import { ESCORT_POSITIONS } from "@/lib/escort-positions";
+import { formatPhoneDisplay } from "@/lib/phone";
 import type { EscortPosition } from "@/generated/prisma/enums";
 
 function positionLabels(positions: EscortPosition[]) {
@@ -61,7 +62,9 @@ export function loadMatchEmail({
   destinationState,
   escortPositions,
   distanceMiles,
+  locationLabel,
   loadUrl,
+  posterPhone,
 }: {
   originCity: string;
   originState: string;
@@ -69,7 +72,9 @@ export function loadMatchEmail({
   destinationState: string;
   escortPositions: EscortPosition[];
   distanceMiles: number;
+  locationLabel: string;
   loadUrl: string;
+  posterPhone: string;
 }) {
   const positions = positionLabels(escortPositions);
   const subject = `New load: ${positions}, ${originCity} ${originState} → ${destinationCity} ${destinationState}, ${Math.round(distanceMiles)}mi`;
@@ -79,8 +84,9 @@ export function loadMatchEmail({
       <p>A new load matching your search just posted:</p>
       <p>
         <strong>${originCity}, ${originState} &rarr; ${destinationCity}, ${destinationState}</strong><br>
-        ${Math.round(distanceMiles)} miles from your search location · ${positions}
+        ${Math.round(distanceMiles)} miles from ${locationLabel} · ${positions}
       </p>
+      <p><a href="tel:${posterPhone}">Call ${formatPhoneDisplay(posterPhone)}</a></p>
       <p><a href="${loadUrl}">View &amp; reveal contact</a></p>
     `,
   };
@@ -108,6 +114,9 @@ export function loadMatchSmsBody({
   destinationState,
   escortPositions,
   distanceMiles,
+  locationLabel,
+  loadUrl,
+  posterPhone,
 }: {
   originCity: string;
   originState: string;
@@ -115,7 +124,13 @@ export function loadMatchSmsBody({
   destinationState: string;
   escortPositions: EscortPosition[];
   distanceMiles: number;
+  locationLabel: string;
+  loadUrl: string;
+  posterPhone: string;
 }) {
   const positions = positionLabels(escortPositions);
-  return `New load: ${positions} escort, ${originCity} ${originState} -> ${destinationCity} ${destinationState}, ${Math.round(distanceMiles)}mi -- view & reveal contact at ${process.env.APP_BASE_URL}/dashboard/pilot-car Reply STOP to opt out.`;
+  // "HeavyHaul Escort Loads: " prefix is a workaround, not cosmetic -- US/CA
+  // carriers don't support alphanumeric sender ID, so the sender otherwise
+  // shows as a bare phone number with no indication of who it's from.
+  return `HeavyHaul Escort Loads: New load: ${positions} escort, ${originCity} ${originState} -> ${destinationCity} ${destinationState}, ${Math.round(distanceMiles)}mi from ${locationLabel}. Call ${posterPhone}. View & reveal contact at ${loadUrl} Reply STOP to opt out.`;
 }

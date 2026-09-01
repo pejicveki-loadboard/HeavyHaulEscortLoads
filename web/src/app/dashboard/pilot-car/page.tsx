@@ -7,9 +7,15 @@ import { hasLoadBoardAccess } from "@/lib/subscription";
 import { ESCORT_POSITIONS } from "@/lib/escort-positions";
 import { BrowseLoadsPanel } from "@/components/browse-loads-panel";
 
-export default async function PilotCarDashboardPage() {
+export default async function PilotCarDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ loadId?: string; searchLocationId?: string }>;
+}) {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const { loadId, searchLocationId } = await searchParams;
 
   const profile = await prisma.pilotCarProfile.findUnique({
     where: { userId: session.user.id },
@@ -102,6 +108,8 @@ export default async function PilotCarDashboardPage() {
                 radiusMiles: l.radiusMiles,
                 escortPositions: l.escortPositions,
               }))}
+            initialLoadId={loadId}
+            initialSearchLocationId={searchLocationId}
           />
         ) : (
           <p className="text-sm text-brand-muted">

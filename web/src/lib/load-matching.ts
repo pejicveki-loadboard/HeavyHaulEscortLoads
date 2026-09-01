@@ -17,6 +17,9 @@ export const MAX_ATTEMPTS = 2;
 
 type MatchRow = {
   search_location_id: string;
+  search_location_label: string | null;
+  search_location_city: string;
+  search_location_state: string;
   pilot_email: string;
   pilot_phone: string;
   alert_channel: AlertChannelPreference;
@@ -30,6 +33,8 @@ type LoadForAlert = {
   destinationCity: string;
   destinationState: string;
   escortPositions: EscortPosition[];
+  postedByPhone: string;
+  alertCycle: number;
 };
 
 type PendingRetry = {
@@ -51,11 +56,17 @@ type PendingRetry = {
 // "real-time" per the plan), and any failures get exactly one retry pass
 // scheduled via after() once this function returns -- see retryFailedAlerts.
 export async function matchAndAlertLoad(loadId: string): Promise<void> {
-  const load = await prisma.load.findUnique({ where: { id: loadId } });
+  const load = await prisma.load.findUnique({
+    where: { id: loadId },
+    include: { postedBy: { select: { phone: true } } },
+  });
   if (!load || load.status !== "open") return;
+  const alertLoad: LoadForAlert = { ...load, postedByPhone: load.postedBy.phone };
 
   const matches = await prisma.$queryRaw<MatchRow[]>`
-    SELECT sl.id as search_location_id, u.email as pilot_email, pcp.phone as pilot_phone,
+    SELECT sl.id as search_location_id, sl.label as search_location_label,
+      sl.city as search_location_city, sl.state as search_location_state,
+      u.email as pilot_email, pcp.phone as pilot_phone,
       sl.alert_channel,
       (3959 * acos(least(1, greatest(-1,
         cos(radians(sl.lat)) * cos(radians(${load.originLat})) * cos(radians(${load.originLng}) - radians(sl.lng))
@@ -82,7 +93,7 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
   for (const match of matches) {
     const wantedChannels = channelsFor(match.alert_channel);
     for (const channel of wantedChannels) {
-      const result = await attemptAlert(loadId, match, load, channel);
+      const result = await attemptAlert(loadId, match, alertLoad, channel);
       if (result?.failed) {
         toRetry.push({ alertId: result.id, match, channel });
       }
@@ -96,7 +107,7 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
     // app runs on Vercel serverless: function execution isn't guaranteed to
     // continue once the response is sent otherwise, so an un-awaited retry
     // could silently never run in production while looking fine locally.
-    after(() => retryFailedAlerts(toRetry, load));
+    after(() => retryFailedAlerts(toRetry, alertLoad));
   }
 }
 
@@ -110,10 +121,13 @@ function channelsFor(preference: AlertChannelPreference): AlertChannel[] {
   return [AlertChannel.email, AlertChannel.sms];
 }
 
-// Inserts the LoadAlert row first (claiming the (load, location, channel)
-// slot via the unique constraint) before attempting the send, so a
-// concurrent re-trigger of matching can never double-send. Returns null if
-// the slot was already claimed by an earlier trigger (nothing to do here).
+// Inserts the LoadAlert row first (claiming the (load, location, channel,
+// alertCycle) slot via the unique constraint) before attempting the send,
+// so a concurrent re-trigger of matching can never double-send. Returns
+// null if the slot was already claimed by an earlier trigger (nothing to
+// do here). Stamping load.alertCycle here (rather than defaulting) is what
+// lets a reopened load claim a fresh slot without colliding with the prior
+// cycle's row -- see Load.alertCycle.
 async function attemptAlert(
   loadId: string,
   match: MatchRow,
@@ -123,7 +137,13 @@ async function attemptAlert(
   let alert;
   try {
     alert = await prisma.loadAlert.create({
-      data: { loadId, searchLocationId: match.search_location_id, channel, attempts: 1 },
+      data: {
+        loadId,
+        searchLocationId: match.search_location_id,
+        channel,
+        attempts: 1,
+        alertCycle: load.alertCycle,
+      },
     });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
@@ -148,6 +168,17 @@ async function performSend(
   match: MatchRow,
   load: LoadForAlert
 ): Promise<boolean> {
+  // No searchLocationId on this link (dropped along with the long
+  // /dashboard/pilot-car?loadId=...&searchLocationId=... form) -- the
+  // distance/label it used to feed the landing page's cosmetic "X mi away"
+  // badge is now stated directly in the alert body instead (see
+  // locationLabel below), so the query param was pure redundancy once that
+  // text existed. loadId alone still fully identifies the load; see
+  // GET /api/loads/[id].
+  const loadUrl = `${process.env.APP_BASE_URL}/l/${load.id}`;
+  const locationLabel =
+    match.search_location_label || `${match.search_location_city}, ${match.search_location_state}`;
+  const posterPhone = normalizePhoneToE164(load.postedByPhone);
   try {
     if (channel === AlertChannel.email) {
       const { subject, html } = loadMatchEmail({
@@ -157,7 +188,9 @@ async function performSend(
         destinationState: load.destinationState,
         escortPositions: load.escortPositions,
         distanceMiles: match.distance_miles,
-        loadUrl: `${process.env.APP_BASE_URL}/dashboard/pilot-car`,
+        locationLabel,
+        loadUrl,
+        posterPhone,
       });
       await sendEmail({ to: match.pilot_email, subject, html });
     } else {
@@ -168,6 +201,9 @@ async function performSend(
         destinationState: load.destinationState,
         escortPositions: load.escortPositions,
         distanceMiles: match.distance_miles,
+        locationLabel,
+        loadUrl,
+        posterPhone,
       });
       await sendSms({ to: normalizePhoneToE164(match.pilot_phone), body });
     }
