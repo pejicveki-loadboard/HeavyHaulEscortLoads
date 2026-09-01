@@ -99,7 +99,7 @@ const SECTIONS: Section[] = [
       },
       {
         q: "Can I choose email, SMS, or both?",
-        a: "Each search location has its own channel preference. Note: SMS delivery isn't live yet (pending a carrier account issue on our end) — email is fully live today.",
+        a: "Each search location has its own channel preference — choose email, SMS, or both. Both channels are fully live today.",
       },
       {
         q: "Why am I not receiving alerts?",
