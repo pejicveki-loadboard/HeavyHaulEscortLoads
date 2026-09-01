@@ -87,7 +87,7 @@ export function loadMatchEmail({
         ${Math.round(distanceMiles)} miles from ${locationLabel} · ${positions}
       </p>
       <p><a href="tel:${posterPhone}">Call ${formatPhoneDisplay(posterPhone)}</a></p>
-      <p><a href="${loadUrl}">View &amp; reveal contact</a></p>
+      <p><a href="${loadUrl}">Get Load Details</a></p>
     `,
   };
 }
@@ -132,5 +132,5 @@ export function loadMatchSmsBody({
   // "HeavyHaul Escort Loads: " prefix is a workaround, not cosmetic -- US/CA
   // carriers don't support alphanumeric sender ID, so the sender otherwise
   // shows as a bare phone number with no indication of who it's from.
-  return `HeavyHaul Escort Loads: New load: ${positions} escort, ${originCity} ${originState} -> ${destinationCity} ${destinationState}, ${Math.round(distanceMiles)}mi from ${locationLabel}. Call ${posterPhone}. View & reveal contact at ${loadUrl} Reply STOP to opt out.`;
+  return `HeavyHaul Escort Loads: New load: ${positions} escort, ${originCity} ${originState} -> ${destinationCity} ${destinationState}, ${Math.round(distanceMiles)}mi from ${locationLabel}. Call ${posterPhone}. Get Load Details at ${loadUrl} Reply STOP to opt out.`;
 }
