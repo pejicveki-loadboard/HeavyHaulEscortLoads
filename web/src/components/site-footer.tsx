@@ -39,6 +39,9 @@ export function SiteFooter() {
         <Link href="/contact" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           Contact
         </Link>
+        <Link href="/blog" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
+          Blog
+        </Link>
         <Link href="/terms" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
           Terms of Use
         </Link>

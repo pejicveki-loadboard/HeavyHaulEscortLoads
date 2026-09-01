@@ -3,6 +3,9 @@ import "./globals.css";
 import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
+  // Needed so per-page Open Graph image/URL fields (e.g. blog posts) resolve
+  // to absolute URLs instead of Next.js falling back to localhost.
+  metadataBase: process.env.APP_BASE_URL ? new URL(process.env.APP_BASE_URL) : undefined,
   title: "HeavyHaul Escort Loads",
   description:
     "Post oversize loads or find pilot car escort work — one login for both, at HeavyHaul Escort Loads.",
