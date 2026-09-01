@@ -3,10 +3,15 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
+import { isValidUsPhone } from "@/lib/phone";
 
 const schema = z.object({
   companyName: z.string().trim().min(1, "Company name is required."),
-  phone: z.string().trim().min(1, "Phone is required."),
+  phone: z
+    .string()
+    .trim()
+    .min(1, "Phone is required.")
+    .refine(isValidUsPhone, "Enter a valid 10-digit US phone number."),
   dotNumber: z.string().trim().optional(),
   mcNumber: z.string().trim().optional(),
 });

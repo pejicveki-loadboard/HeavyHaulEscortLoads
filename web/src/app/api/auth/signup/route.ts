@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/resend";
 import { verificationEmail } from "@/lib/email-templates";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
+import { isValidUsPhone } from "@/lib/phone";
 
 const VERIFICATION_TOKEN_TTL_HOURS = 24;
 
@@ -14,7 +15,12 @@ const signupSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
   // Both optional -- the SMS opt-in section on /signup is not required to
   // create an account. smsConsent true without a phone is just ignored.
-  phone: z.string().trim().min(1).optional(),
+  phone: z
+    .string()
+    .trim()
+    .min(1)
+    .optional()
+    .refine((val) => val === undefined || isValidUsPhone(val), "Enter a valid 10-digit US phone number."),
   smsConsent: z.boolean().optional(),
 });
 

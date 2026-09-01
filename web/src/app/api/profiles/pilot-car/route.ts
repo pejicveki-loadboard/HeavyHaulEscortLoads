@@ -4,12 +4,17 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { SubscriptionStatus } from "@/generated/prisma/enums";
 import { Prisma } from "@/generated/prisma/client";
+import { isValidUsPhone } from "@/lib/phone";
 
 const TRIAL_LENGTH_DAYS = 30;
 
 const schema = z.object({
   companyName: z.string().trim().min(1, "Company name is required."),
-  phone: z.string().trim().min(1, "Phone is required."),
+  phone: z
+    .string()
+    .trim()
+    .min(1, "Phone is required.")
+    .refine(isValidUsPhone, "Enter a valid 10-digit US phone number."),
 });
 
 export async function POST(request: Request) {
