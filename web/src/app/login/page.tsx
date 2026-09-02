@@ -70,6 +70,9 @@ export default function LoginPage() {
                 className="rounded border border-brand-border bg-brand-panel px-3 py-2 text-brand-text"
               />
             </label>
+            <Link href="/forgot-password" className="self-end text-sm text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
+              Forgot password?
+            </Link>
             {error && <p className="text-sm text-red-400">{error}</p>}
             <button
               type="submit"

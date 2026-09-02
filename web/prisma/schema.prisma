@@ -101,6 +101,15 @@ model User {
   phone          String?   @map("phone")
   smsConsentedAt DateTime? @map("sms_consented_at")
 
+  // Added 2026-09-03 for self-service password reset. Same single-column,
+  // overwrite-to-invalidate shape as emailVerificationToken above, but
+  // storing only a SHA-256 hash of the token (not the raw value) since a
+  // leaked reset token is a full account takeover, unlike a leaked
+  // verification token -- see /api/auth/forgot-password and
+  // /api/auth/reset-password.
+  passwordResetTokenHash      String?   @unique @map("password_reset_token_hash")
+  passwordResetTokenExpiresAt DateTime? @map("password_reset_token_expires_at")
+
   loadManagerProfile LoadManagerProfile?
   pilotCarProfile    PilotCarProfile?
 

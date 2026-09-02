@@ -55,6 +55,17 @@ export function verificationEmail(verifyUrl: string) {
   };
 }
 
+export function resetPasswordEmail(resetUrl: string) {
+  return {
+    subject: "Reset your password — HeavyHaul Escort Loads",
+    html: `
+      <p>We got a request to reset the password on your HeavyHaul Escort Loads account.</p>
+      <p><a href="${resetUrl}">Click here to choose a new password</a>. This link expires in 30 minutes.</p>
+      <p>If you didn't request this, you can ignore this email — your password won't change.</p>
+    `,
+  };
+}
+
 export function loadMatchEmail({
   originCity,
   originState,

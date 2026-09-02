@@ -10,6 +10,7 @@ export const RATE_LIMITS = {
   signup: { windowMs: 15 * 60 * 1000, max: 5 },
   login: { windowMs: 15 * 60 * 1000, max: 10 },
   "contact-reveal": { windowMs: 60 * 1000, max: 20 },
+  "forgot-password": { windowMs: 15 * 60 * 1000, max: 5 },
 } satisfies Record<string, RateLimitConfig>;
 
 // Vercel puts the real client address in x-forwarded-for (leftmost entry);
