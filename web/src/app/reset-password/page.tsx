@@ -39,6 +39,8 @@ function ResetPasswordForm() {
       }
 
       setSuccess(true);
+    } catch {
+      setError("Something went wrong. Check your connection and try again.");
     } finally {
       setSubmitting(false);
     }

@@ -110,6 +110,13 @@ model User {
   passwordResetTokenHash      String?   @unique @map("password_reset_token_hash")
   passwordResetTokenExpiresAt DateTime? @map("password_reset_token_expires_at")
 
+  // Added 2026-09-03 alongside self-service password reset. Bumped whenever
+  // a password reset succeeds; the value is embedded in the session JWT at
+  // sign-in and re-checked against this column on every session read, so a
+  // reset invalidates any other JWT already issued for this account instead
+  // of leaving it valid until natural expiry.
+  tokenVersion Int @default(0) @map("token_version")
+
   loadManagerProfile LoadManagerProfile?
   pilotCarProfile    PilotCarProfile?
 

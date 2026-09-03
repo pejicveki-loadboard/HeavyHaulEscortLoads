@@ -30,6 +30,8 @@ export default function ForgotPasswordPage() {
       // Same generic message regardless of whether the email matched an
       // account -- never reveal account existence.
       setSubmitted(true);
+    } catch {
+      setError("Something went wrong. Check your connection and try again.");
     } finally {
       setSubmitting(false);
     }

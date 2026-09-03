@@ -10,7 +10,28 @@ export const RATE_LIMITS = {
   signup: { windowMs: 15 * 60 * 1000, max: 5 },
   login: { windowMs: 15 * 60 * 1000, max: 10 },
   "contact-reveal": { windowMs: 60 * 1000, max: 20 },
-  "forgot-password": { windowMs: 15 * 60 * 1000, max: 5 },
+  // Two scopes rather than one "forgot-password" scope keyed by a manual
+  // ip:/email: identifier prefix -- every other entry here is one scope per
+  // identifier axis, and checkRateLimit() already namespaces keys by scope,
+  // so splitting the axes this way needs no prefix convention of its own.
+  "forgot-password-ip": { windowMs: 15 * 60 * 1000, max: 5 },
+  // TODO(2026-09-03, ultrareview): keyed only by the target email, with no
+  // auth on who's submitting it -- an attacker rotating IPs (or any
+  // IP-diverse source) can send 5 forgot-password POSTs for a victim's
+  // email inside the window and lock the real victim out of their own
+  // password recovery for the rest of it (a lockout DoS, not an account
+  // compromise). Needs a design call rather than a mechanical fix: e.g.
+  // don't 429 this axis at all (silently skip issuing a new token/email
+  // past the threshold but still return the same generic 200, so an
+  // attacker gets no signal and the victim isn't blocked -- just doesn't
+  // get a fresh email until the window rolls), or move to a per-account
+  // cooldown that only throttles the same email from repeating, not a hard
+  // multi-source block.
+  "forgot-password-email": { windowMs: 15 * 60 * 1000, max: 5 },
+  // reset-password-token is keyed by the token's hash, not the raw token --
+  // same reasoning as passwordResetTokenHash never storing the raw value.
+  "reset-password-ip": { windowMs: 15 * 60 * 1000, max: 5 },
+  "reset-password-token": { windowMs: 15 * 60 * 1000, max: 5 },
 } satisfies Record<string, RateLimitConfig>;
 
 // Vercel puts the real client address in x-forwarded-for (leftmost entry);
