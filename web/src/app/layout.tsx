@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/icon-180.png", sizes: "180x180", type: "image/png" }],
   },
+  verification: {
+    google: "Hmu1nHCFmgORUpP7BIu9p7fUt3Tx70L80p2iIsLXOeg",
+  },
 };
 
 export const viewport: Viewport = {
