@@ -21,6 +21,8 @@ export type BlogPost = {
   // description -- one post doesn't need two near-duplicate summaries.
   excerpt: string;
   date: string; // ISO yyyy-mm-dd
+  // 1200x630 social share card for this post's og:image/twitter:image.
+  image: string;
   body: BlogBlock[];
   cta?: { label: string; href: string };
 };
@@ -32,6 +34,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "If your load board is dropping text alerts for an app-only replacement, here's what to look for in an alternative — and one that still sends real texts.",
     date: "2026-09-01",
+    image: "/blog-cover-losing-text-alerts.jpg",
     body: [
       {
         type: "p",
@@ -54,6 +57,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "State-by-state Labor Day 2026 travel restrictions for oversize and overweight loads — permit rules, escort scheduling, and what to check before you dispatch.",
     date: "2026-09-02",
+    image: "/blog-cover-labor-day-2026.jpg",
     body: [
       {
         type: "p",

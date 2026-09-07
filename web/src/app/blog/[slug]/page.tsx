@@ -126,13 +126,13 @@ export async function generateMetadata({
       url,
       type: "article",
       publishedTime: post.date,
-      images: [{ url: "/logo-horizontal.png", width: 168, height: 64 }],
+      images: [{ url: post.image, width: 1200, height: 630 }],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
-      images: ["/logo-horizontal.png"],
+      images: [post.image],
     },
   };
 }
@@ -165,7 +165,7 @@ export default async function BlogPostPage({
         url: "https://app.heavyhaulescortloads.com/logo-horizontal.png",
       },
     },
-    image: ["https://app.heavyhaulescortloads.com/logo-horizontal.png"],
+    image: [`https://app.heavyhaulescortloads.com${post.image}`],
   };
 
   return (
