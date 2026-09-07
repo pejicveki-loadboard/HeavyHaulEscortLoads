@@ -146,8 +146,34 @@ export default async function BlogPostPage({
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
+  const postUrl = `https://app.heavyhaulescortloads.com/blog/${post.slug}`;
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    dateModified: post.date,
+    url: postUrl,
+    mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+    author: { "@type": "Organization", name: "HeavyHaul Escort Loads" },
+    publisher: {
+      "@type": "Organization",
+      name: "HeavyHaul Escort Loads",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://app.heavyhaulescortloads.com/logo-horizontal.png",
+      },
+    },
+    image: ["https://app.heavyhaulescortloads.com/logo-horizontal.png"],
+  };
+
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-8 p-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <Link href="/" className="shrink-0">
         <Image
           src="/logo-horizontal.png"
