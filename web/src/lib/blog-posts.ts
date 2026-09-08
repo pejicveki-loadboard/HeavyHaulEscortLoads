@@ -217,6 +217,63 @@ export const BLOG_POSTS: BlogPost[] = [
     ],
     cta: { label: "Post your load free →", href: "/signup" },
   },
+  {
+    slug: "massachusetts-superload-permitting-2026",
+    title: "Massachusetts Superload Permitting Changes for 2026",
+    excerpt:
+      "Massachusetts bills would raise the superload permit threshold from 130,000 to 199,000 lbs, aligning with neighboring states — here's what it means for your next Northeast route.",
+    date: "2026-09-08",
+    image: "/blog-cover-massachusetts-superload.jpg",
+    body: [
+      {
+        type: "p",
+        text: "If you've ever tried to route a superload through New England, you already know Massachusetts has been the odd one out. New legislation introduced in both chambers of the state legislature could change that — and it's worth understanding before your next multi-state move through the region.",
+      },
+      { type: "h2", text: "What's actually changing" },
+      {
+        type: "p",
+        text: "Bills now moving through the Massachusetts House and Senate would raise the weight threshold for a superload permit from **130,000 pounds to 199,000 pounds** gross vehicle weight. That 130,000-pound line has been the strictest cutoff anywhere in the region, which meant loads that moved through Connecticut, New York, or Rhode Island without needing superload paperwork suddenly needed it the moment they crossed into Massachusetts.",
+      },
+      {
+        type: "p",
+        text: "The push is coming from the Specialized Carriers & Rigging Association (SC&RA), which has been lobbying to align permitting rules across the Northeast so a load doesn't get treated completely differently every time it crosses a state line. If the bill passes, Massachusetts's threshold would match its neighbors', and the state's DOT would also be required to set up an application and fee schedule for expedited superload permits — something surrounding states already offer.",
+      },
+      { type: "h2", text: "Why this matters if you run escorts or book heavy-haul freight" },
+      {
+        type: "p",
+        text: "For pilot car operators, permitting mismatches like this one are a big part of why routes get planned around a state rather than through it. A carrier moving a load that qualifies as a superload in Massachusetts but not in Connecticut or New York has had to plan for extra lead time, extra paperwork, and sometimes an extra escort vehicle just for the Massachusetts leg. Harmonizing the threshold doesn't eliminate the permit — it just means the load isn't singled out for stricter treatment the moment it enters the state.",
+      },
+      {
+        type: "p",
+        text: "That's good news for anyone booking escorts on a route that touches Massachusetts: less unpredictability in lead time, and permitting requirements that look more like what you'd already expect based on the load's dimensions and weight, not which state line it happens to cross.",
+      },
+      {
+        type: "p",
+        text: "This isn't an isolated effort, either. According to the SC&RA, similar permit harmonization work is underway in North Dakota, Tennessee, Oklahoma, Colorado, Utah, and California, along with a new permit system being built with Kentucky. The association has flagged that some of these newer, partially-automated permitting systems still have rough edges — common routes getting denied by the system is a known issue as states work out the kinks.",
+      },
+      { type: "h2", text: "The bigger picture for the industry" },
+      {
+        type: "p",
+        text: "At the SC&RA's Transportation Symposium in Birmingham, the association's Transportation Committee chair also pointed to a couple of things worth keeping an eye on:",
+      },
+      {
+        type: "list",
+        items: [
+          "**A possible permanent extension of the 30-minute rest break exemption** for oversize/overweight haulers, which SC&RA has previously been able to get extended on a temporary basis.",
+          "**Continued scrutiny of \"bad actors\"** in the oversize/overweight space — carriers cutting corners on safety practices — which state and federal regulators are watching closely as they consider new rules. The association's message to regulators has been to avoid overly broad restrictions that make it harder for legitimate operators to do the job right.",
+        ],
+      },
+      {
+        type: "p",
+        text: "None of this is finalized yet — the Massachusetts bills still have to move through the legislature. But if you regularly plan routes through New England, this is worth tracking, since a passed bill would mean less friction and more predictable lead times on loads that currently get flagged the moment they hit the Massachusetts border.",
+      },
+      {
+        type: "blockquote",
+        text: "Based on reporting from Overdrive.",
+      },
+    ],
+    cta: { label: "Post your load free →", href: "/signup" },
+  },
 ];
 
 export function getAllPosts(): BlogPost[] {
