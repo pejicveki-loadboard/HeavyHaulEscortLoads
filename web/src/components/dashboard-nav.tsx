@@ -65,6 +65,9 @@ export function DashboardNav({
           )}
         </div>
         <div className="flex items-center gap-3">
+          <NavTab href="/dashboard/settings" active={pathname.startsWith("/dashboard/settings")}>
+            Account Settings
+          </NavTab>
           <span className="text-sm text-brand-muted">{email}</span>
           <SignOutButton />
         </div>

@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SiteFooter } from "@/components/site-footer";
+import { RegisterServiceWorker } from "@/components/register-service-worker";
+import { IosInstallBanner } from "@/components/ios-install-banner";
 
 export const metadata: Metadata = {
   // Needed so per-page Open Graph image/URL fields (e.g. blog posts) resolve
@@ -34,6 +36,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         {children}
         <SiteFooter />
+        <RegisterServiceWorker />
+        <IosInstallBanner />
       </body>
     </html>
   );
