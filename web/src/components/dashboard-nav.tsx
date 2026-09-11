@@ -9,7 +9,7 @@ function NavTab({ href, active, children }: { href: string; active: boolean; chi
   return (
     <Link
       href={href}
-      className={`rounded px-3 py-1.5 text-sm transition-all duration-150 active:scale-[0.97] ${
+      className={`whitespace-nowrap rounded px-3 py-1.5 text-sm transition-all duration-150 active:scale-[0.97] ${
         active
           ? "bg-brand-accent text-brand-accent-text hover:bg-brand-accent-light active:bg-brand-accent-deep"
           : "border border-brand-border text-brand-muted hover:border-brand-accent hover:bg-brand-accent/8 hover:text-brand-text active:bg-brand-accent/16"
@@ -64,11 +64,11 @@ export function DashboardNav({
             </Link>
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <NavTab href="/dashboard/settings" active={pathname.startsWith("/dashboard/settings")}>
             Account Settings
           </NavTab>
-          <span className="text-sm text-brand-muted">{email}</span>
+          <span className="whitespace-nowrap text-sm text-brand-muted">{email}</span>
           <SignOutButton />
         </div>
       </div>
