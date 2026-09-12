@@ -21,6 +21,22 @@ const unsubscribeSchema = z.object({
   endpoint: z.string().url(),
 });
 
+// TODO (known, deliberately deferred -- narrow edge cases on an opt-in,
+// additive feature, not launch blockers): neither POST nor DELETE verifies
+// that the calling browser actually owns `endpoint` before binding/unbinding
+// it to the caller's profile. Shared root cause across three cases:
+//  - On a shared/reused device, User B logging in after User A enabled push
+//    there sees the checkbox read as "on" (browser-side subscription still
+//    exists) even though this row's profileId is still A's -- B's DELETE
+//    below then silently matches zero rows (profileId mismatch) instead of
+//    actually detaching the device.
+//  - POST's upsert reassigns profileId to whoever calls it with a given
+//    endpoint, with no proof of ownership -- if an endpoint string ever
+//    leaked to another authenticated user, they could redirect that
+//    subscription's notifications to themselves.
+// A real fix needs some proof-of-possession for the endpoint (e.g. a
+// server-issued token round-tripped through the subscribe flow) rather than
+// trusting whatever endpoint the client claims.
 async function requireProfile() {
   const session = await auth();
   if (!session?.user) return { error: NextResponse.json({ error: "Not authenticated." }, { status: 401 }) };

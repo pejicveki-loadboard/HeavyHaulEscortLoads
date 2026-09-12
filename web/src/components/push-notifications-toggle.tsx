@@ -4,6 +4,28 @@ import { useEffect, useState } from "react";
 
 type Status = "checking" | "unsupported" | "off" | "on" | "subscribing" | "error";
 
+// serviceWorker.ready can hang indefinitely if registration stalls (scope
+// mismatch, browser bug, corporate policy blocking service workers) --
+// without this, checkExistingSubscription's await never resolves and the
+// checkbox stays stuck disabled on "checking" forever with no feedback.
+const SERVICE_WORKER_READY_TIMEOUT_MS = 8000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("Timed out waiting for service worker.")), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      }
+    );
+  });
+}
+
 function urlBase64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);
   const base64Safe = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -29,11 +51,14 @@ export function PushNotificationsToggle() {
         return;
       }
       try {
-        const registration = await navigator.serviceWorker.ready;
+        const registration = await withTimeout(
+          navigator.serviceWorker.ready,
+          SERVICE_WORKER_READY_TIMEOUT_MS
+        );
         const subscription = await registration.pushManager.getSubscription();
         if (!cancelled) setStatus(subscription ? "on" : "off");
       } catch {
-        if (!cancelled) setStatus("off");
+        if (!cancelled) setStatus("error");
       }
     }
     checkExistingSubscription();
@@ -108,6 +133,10 @@ export function PushNotificationsToggle() {
         <p className="text-sm text-brand-muted">
           Push notifications aren&apos;t supported on this browser yet. Email and text alerts are
           available above.
+        </p>
+      ) : status === "error" ? (
+        <p className="text-sm text-red-400">
+          Couldn&apos;t check push notification status on this device — try reloading the page.
         </p>
       ) : (
         <>
