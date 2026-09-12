@@ -211,6 +211,12 @@ model PilotCarProfile {
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   searchLocations SearchLocation[]
 
+  // Web push is a completely separate opt-in channel from the SMS consent
+  // above -- keyed to a browser/device (PushSubscription), not a phone
+  // number, and toggled from Account Settings rather than the signup page
+  // or a SearchLocation's alertChannel. See PushSubscription.
+  pushSubscriptions PushSubscription[]
+
   @@map("pilot_car_profiles")
 }
 
@@ -299,7 +305,8 @@ model Load {
   // deleting rows on reopen would silently corrupt it.
   alertCycle Int @default(1) @map("alert_cycle")
 
-  loadAlerts LoadAlert[]
+  loadAlerts          LoadAlert[]
+  pushNotificationLogs PushNotificationLog[]
 
   @@map("loads")
 }
@@ -353,4 +360,57 @@ model RateLimitHit {
   count       Int      @default(0)
 
   @@map("rate_limit_hits")
+}
+
+// --- Web push (PWA) -------------------------------------------------------
+//
+// Deliberately separate from everything above: SMS consent lives on
+// User/PilotCarProfile as a phone number + timestamp, and per-search-location
+// channel preference is AlertChannelPreference (email|sms|both) on
+// SearchLocation. Push has neither -- it's opted into once per browser/device
+// from Account Settings (not the signup page, not per-search-location), and
+// a profile can hold several active subscriptions (one per device). A row's
+// mere existence means that device is subscribed; unchecking the Account
+// Settings checkbox unsubscribes the browser and deletes the row, so there's
+// no separate enabled flag to fall out of sync with the browser's own state.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  profileId String   @map("profile_id")
+
+  // The three fields the Push API's PushSubscription.toJSON() gives back --
+  // endpoint uniquely identifies the browser+device registration.
+  endpoint String @unique
+  p256dh   String
+  auth     String
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  profile              PilotCarProfile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  pushNotificationLogs PushNotificationLog[]
+
+  @@map("push_subscriptions")
+}
+
+// Dedupe log for push sends, mirroring LoadAlert's (load, target, cycle)
+// shape but kept as its own table rather than reusing LoadAlert/AlertChannel
+// -- push isn't an AlertChannel and a PushSubscription isn't a
+// SearchLocation, so there's nothing correct to join it against there. A row
+// is written only after a confirmed successful send (no claim-then-attempt
+// or retry pass like LoadAlert has -- push has no delivery guarantee to
+// begin with, and a reopen/edit re-triggering matchAndAlertLoad will simply
+// try again for any subscription that doesn't have a row yet).
+model PushNotificationLog {
+  id             String   @id @default(cuid())
+  loadId         String   @map("load_id")
+  subscriptionId String   @map("subscription_id")
+  // Copied from Load.alertCycle at send time, same purpose as
+  // LoadAlert.alertCycle -- a reopened load gets a fresh dedupe slot.
+  alertCycle     Int      @default(1) @map("alert_cycle")
+  sentAt         DateTime @default(now()) @map("sent_at")
+
+  load         Load             @relation(fields: [loadId], references: [id], onDelete: Cascade)
+  subscription PushSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([loadId, subscriptionId, alertCycle])
+  @@map("push_notification_logs")
 }

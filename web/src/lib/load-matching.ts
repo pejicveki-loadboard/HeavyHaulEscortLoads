@@ -7,6 +7,7 @@ import { sendEmail } from "@/lib/resend";
 import { sendSms } from "@/lib/twilio";
 import { normalizePhoneToE164 } from "@/lib/phone";
 import { loadMatchEmail, loadMatchSmsBody } from "@/lib/email-templates";
+import { sendPushAlertsForMatches } from "@/lib/push-alerts";
 
 // A row is claimed (inserted) then retried at most once, so the highest
 // legitimate attempts value is 2 (initial + one retry). A row is
@@ -22,6 +23,9 @@ type MatchRow = {
   search_location_state: string;
   pilot_email: string;
   pilot_phone: string;
+  // Added for the push-notification hook point only -- not used by the
+  // existing email/sms channel logic below. See sendPushAlertsForMatches.
+  pilot_car_profile_id: string;
   alert_channel: AlertChannelPreference;
   distance_miles: number;
 };
@@ -66,7 +70,7 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
   const matches = await prisma.$queryRaw<MatchRow[]>`
     SELECT sl.id as search_location_id, sl.label as search_location_label,
       sl.city as search_location_city, sl.state as search_location_state,
-      u.email as pilot_email, pcp.phone as pilot_phone,
+      u.email as pilot_email, pcp.phone as pilot_phone, pcp.id as pilot_car_profile_id,
       sl.alert_channel,
       (3959 * acos(least(1, greatest(-1,
         cos(radians(sl.lat)) * cos(radians(${load.originLat})) * cos(radians(${load.originLng}) - radians(sl.lng))
@@ -109,6 +113,17 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
     // could silently never run in production while looking fine locally.
     after(() => retryFailedAlerts(toRetry, alertLoad));
   }
+
+  // Additive push-notification branch -- fires independently of the
+  // email/sms loop above and of each match's alertChannel preference (see
+  // sendPushAlertsForMatches). Scheduled via after() and wrapped so a push
+  // failure can never affect the email/sms behavior above or this
+  // function's return.
+  after(() =>
+    sendPushAlertsForMatches(matches, alertLoad).catch((error) =>
+      console.error(`Push alert branch failed for load ${loadId}:`, error)
+    )
+  );
 }
 
 // A location set to "email" or "sms" only never gets an attemptAlert call
