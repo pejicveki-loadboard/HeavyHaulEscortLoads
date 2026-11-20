@@ -2,12 +2,13 @@ import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { AlertChannel, AlertSendStatus } from "@/generated/prisma/enums";
-import type { AlertChannelPreference, EscortPosition } from "@/generated/prisma/enums";
+import type { AlertChannelPreference, EscortPosition, SubscriptionStatus } from "@/generated/prisma/enums";
 import { sendEmail } from "@/lib/resend";
 import { sendSms } from "@/lib/twilio";
 import { normalizePhoneToE164 } from "@/lib/phone";
 import { loadMatchEmail, loadMatchSmsBody } from "@/lib/email-templates";
 import { sendPushAlertsForMatches } from "@/lib/push-alerts";
+import { hasAccess } from "@/lib/access";
 
 // A row is claimed (inserted) then retried at most once, so the highest
 // legitimate attempts value is 2 (initial + one retry). A row is
@@ -28,7 +29,27 @@ type MatchRow = {
   pilot_car_profile_id: string;
   alert_channel: AlertChannelPreference;
   distance_miles: number;
+  // Access columns, so recipients are filtered by hasAccess() in JS -- the
+  // single source of truth -- instead of a SQL copy of the rule.
+  access_enabled: boolean;
+  free_access_until: Date | null;
+  subscription_status: SubscriptionStatus;
+  trial_ends_at: Date | null;
+  past_due_since: Date | null;
 };
+
+function matchHasAccess(match: MatchRow, now: Date = new Date()): boolean {
+  return hasAccess(
+    {
+      accessEnabled: match.access_enabled,
+      freeAccessUntil: match.free_access_until,
+      subscriptionStatus: match.subscription_status,
+      trialEndsAt: match.trial_ends_at,
+      pastDueSince: match.past_due_since,
+    },
+    now
+  );
+}
 
 type LoadForAlert = {
   id: string;
@@ -48,7 +69,8 @@ type PendingRetry = {
 };
 
 // Runs the same radius+escort-position match as browse, but against every
-// active SearchLocation on a trialing (not expired)/active PilotCarProfile,
+// active SearchLocation whose PilotCarProfile passes hasAccess() (admin
+// switch, free-access promo, grants, then trial/subscription),
 // with no dedup across a profile's own locations -- see PHASE1_PLAN.md Week
 // 2 Day 4. Called on load create and on edits that change origin or escort
 // positions (see the loads API routes). Each location's own alertChannel
@@ -67,30 +89,7 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
   if (!load || load.status !== "open") return;
   const alertLoad: LoadForAlert = { ...load, postedByPhone: load.postedBy.phone };
 
-  const matches = await prisma.$queryRaw<MatchRow[]>`
-    SELECT sl.id as search_location_id, sl.label as search_location_label,
-      sl.city as search_location_city, sl.state as search_location_state,
-      u.email as pilot_email, pcp.phone as pilot_phone, pcp.id as pilot_car_profile_id,
-      sl.alert_channel,
-      (3959 * acos(least(1, greatest(-1,
-        cos(radians(sl.lat)) * cos(radians(${load.originLat})) * cos(radians(${load.originLng}) - radians(sl.lng))
-        + sin(radians(sl.lat)) * sin(radians(${load.originLat}))
-      )))) as distance_miles
-    FROM search_locations sl
-    JOIN pilot_car_profiles pcp ON pcp.id = sl.profile_id
-    JOIN users u ON u.id = pcp.user_id
-    WHERE sl.active = true
-      AND sl.lat IS NOT NULL AND sl.lng IS NOT NULL
-      AND sl.escort_positions && ${load.escortPositions}::"EscortPosition"[]
-      AND (
-        pcp.subscription_status = 'active'
-        OR (pcp.subscription_status = 'trialing' AND pcp.trial_ends_at > now())
-      )
-      AND (3959 * acos(least(1, greatest(-1,
-            cos(radians(sl.lat)) * cos(radians(${load.originLat})) * cos(radians(${load.originLng}) - radians(sl.lng))
-            + sin(radians(sl.lat)) * sin(radians(${load.originLat}))
-          )))) <= sl.radius_miles
-  `;
+  const matches = (await findMatchingLocations(load)).filter((m) => matchHasAccess(m));
 
   const toRetry: PendingRetry[] = [];
 
@@ -124,6 +123,52 @@ export async function matchAndAlertLoad(loadId: string): Promise<void> {
       console.error(`Push alert branch failed for load ${loadId}:`, error)
     )
   );
+}
+
+type MatchOrigin = { originLat: number; originLng: number; escortPositions: EscortPosition[] };
+
+// Geo + escort-position + active-location match only. Deliberately NO access
+// condition here: callers filter with hasAccess() (see matchHasAccess).
+async function findMatchingLocations(origin: MatchOrigin): Promise<MatchRow[]> {
+  return prisma.$queryRaw<MatchRow[]>`
+    SELECT sl.id as search_location_id, sl.label as search_location_label,
+      sl.city as search_location_city, sl.state as search_location_state,
+      u.email as pilot_email, pcp.phone as pilot_phone, pcp.id as pilot_car_profile_id,
+      sl.alert_channel,
+      pcp.access_enabled, pcp.free_access_until, pcp.subscription_status,
+      pcp.trial_ends_at, pcp.past_due_since,
+      (3959 * acos(least(1, greatest(-1,
+        cos(radians(sl.lat)) * cos(radians(${origin.originLat})) * cos(radians(${origin.originLng}) - radians(sl.lng))
+        + sin(radians(sl.lat)) * sin(radians(${origin.originLat}))
+      )))) as distance_miles
+    FROM search_locations sl
+    JOIN pilot_car_profiles pcp ON pcp.id = sl.profile_id
+    JOIN users u ON u.id = pcp.user_id
+    WHERE sl.active = true
+      AND sl.lat IS NOT NULL AND sl.lng IS NOT NULL
+      AND sl.escort_positions && ${origin.escortPositions}::"EscortPosition"[]
+      AND (3959 * acos(least(1, greatest(-1,
+            cos(radians(sl.lat)) * cos(radians(${origin.originLat})) * cos(radians(${origin.originLng}) - radians(sl.lng))
+            + sin(radians(sl.lat)) * sin(radians(${origin.originLat}))
+          )))) <= sl.radius_miles
+  `;
+}
+
+// Read-only preview of who a load's alerts would go to right now, with the
+// access decision per match. Sends nothing and writes nothing -- used by
+// local dev tooling to verify access filtering.
+export async function previewAlertRecipients(loadId: string, now: Date = new Date()) {
+  const load = await prisma.load.findUnique({ where: { id: loadId } });
+  if (!load) return [];
+  const matches = await findMatchingLocations(load);
+  return matches.map((m) => ({
+    pilotCarProfileId: m.pilot_car_profile_id,
+    email: m.pilot_email,
+    searchLocation: m.search_location_label || `${m.search_location_city}, ${m.search_location_state}`,
+    distanceMiles: Math.round(m.distance_miles),
+    channels: channelsFor(m.alert_channel),
+    wouldAlert: matchHasAccess(m, now),
+  }));
 }
 
 // A location set to "email" or "sms" only never gets an attemptAlert call
@@ -246,6 +291,20 @@ async function retryFailedAlerts(pending: PendingRetry[], load: LoadForAlert): P
     if (!current || current.status === AlertSendStatus.sent || current.attempts >= MAX_ATTEMPTS) {
       continue;
     }
+
+    // Access can change between the initial attempt and this retry (e.g. an
+    // admin switching the profile off), so re-check against live state.
+    const profile = await prisma.pilotCarProfile.findUnique({
+      where: { id: match.pilot_car_profile_id },
+      select: {
+        accessEnabled: true,
+        freeAccessUntil: true,
+        subscriptionStatus: true,
+        trialEndsAt: true,
+        pastDueSince: true,
+      },
+    });
+    if (!profile || !hasAccess(profile)) continue;
 
     const succeeded = await performSend(channel, match, load);
     if (succeeded) {
