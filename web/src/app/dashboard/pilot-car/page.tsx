@@ -3,7 +3,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatSubscriptionStatus } from "@/lib/trial-status";
-import { ACCESS_PAUSED_MESSAGE, accessDenialReason } from "@/lib/access";
+import { ACCESS_PAUSED_MESSAGE, PROMO_COPY_SHORT, accessDenialReason, isPromoActive } from "@/lib/access";
 import { ESCORT_POSITIONS } from "@/lib/escort-positions";
 import { BrowseLoadsPanel } from "@/components/browse-loads-panel";
 
@@ -114,6 +114,10 @@ export default async function PilotCarDashboardPage({
           />
         ) : denied === "admin_off" ? (
           <p className="text-sm text-brand-muted">{ACCESS_PAUSED_MESSAGE}</p>
+        ) : isPromoActive() ? (
+          // Can't happen today (the promo gives everyone access), but if it
+          // ever did, never tell someone to subscribe while payments are off.
+          <p className="text-sm text-brand-muted">{PROMO_COPY_SHORT}</p>
         ) : (
           <p className="text-sm text-brand-muted">
             Your trial has ended —{" "}

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PROMO_COPY_SHORT, isPromoActive } from "@/lib/access";
 
 type InitialValues = {
   companyName: string;
@@ -63,7 +64,9 @@ export function PilotCarProfileForm({
   if (created) {
     return (
       <p className="rounded border border-green-800 bg-green-950 p-3 text-sm text-green-400">
-        Pilot Car profile created — your 30-day trial has started.
+        {isPromoActive()
+          ? `Pilot Car profile created. ${PROMO_COPY_SHORT}`
+          : "Pilot Car profile created — your 30-day trial has started."}
       </p>
     );
   }

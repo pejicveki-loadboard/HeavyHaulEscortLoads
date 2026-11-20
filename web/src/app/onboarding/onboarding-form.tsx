@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoadManagerProfileForm } from "@/components/load-manager-profile-form";
 import { PilotCarProfileForm } from "@/components/pilot-car-profile-form";
+import { PROMO_COPY_SHORT, isPromoActive } from "@/lib/access";
 
 export function OnboardingForm({
   hasLoadManagerProfile,
@@ -56,7 +57,8 @@ export function OnboardingForm({
               onChange={(e) => setWantsPilotCar(e.target.checked)}
             />
             <span>
-              <strong>Find loads</strong> — starts a 30-day free trial
+              <strong>Find loads</strong> —{" "}
+              {isPromoActive() ? PROMO_COPY_SHORT : "starts a 30-day free trial"}
             </span>
           </label>
         )}

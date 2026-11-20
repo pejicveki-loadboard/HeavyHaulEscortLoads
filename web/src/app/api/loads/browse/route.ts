@@ -3,7 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { geocodeCityState } from "@/lib/geocode";
-import { ACCESS_PAUSED_MESSAGE, accessDenialReason } from "@/lib/access";
+import { ACCESS_ENDED_MESSAGE, ACCESS_PAUSED_MESSAGE, accessDenialReason } from "@/lib/access";
 import { EscortPosition } from "@/generated/prisma/enums";
 import { Prisma } from "@/generated/prisma/client";
 
@@ -46,7 +46,7 @@ export async function GET(request: Request) {
   const denied = profile ? accessDenialReason(profile) : "no_subscription";
   if (!profile || denied) {
     return NextResponse.json(
-      { error: denied === "admin_off" ? ACCESS_PAUSED_MESSAGE : "An active or trialing Pilot Car subscription is required to browse loads." },
+      { error: denied === "admin_off" ? ACCESS_PAUSED_MESSAGE : ACCESS_ENDED_MESSAGE },
       { status: 403 }
     );
   }

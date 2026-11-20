@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { PROMO_COPY_LONG } from "@/lib/access";
 
 export const metadata: Metadata = {
   title: "About HeavyHaul Escort Loads | Nationwide Pilot Car & Oversize Load Marketplace",
@@ -60,9 +61,7 @@ export default function AboutPage() {
         <p className="text-brand-text">
           Search the load board by city and radius, filter by escort position — lead, chase, or
           high pole — and get real-time email and SMS alerts the moment a matching load posts, so
-          you&apos;re never missing work in your service area. Every pilot car account starts
-          with a 30-day free trial, no credit card required, on either our monthly or annual
-          plan.
+          you&apos;re never missing work in your service area. {PROMO_COPY_LONG}
         </p>
 
         <h2 className="mt-4 text-xl font-semibold text-brand-text">Why HeavyHaul Escort Loads</h2>
@@ -85,7 +84,7 @@ export default function AboutPage() {
           <Link href="/pricing" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             pricing
           </Link>{" "}
-          to start your pilot car company&apos;s free trial. Questions? Check our{" "}
+          to get your pilot car company started free. Questions? Check our{" "}
           <Link href="/faq" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
             FAQ
           </Link>{" "}

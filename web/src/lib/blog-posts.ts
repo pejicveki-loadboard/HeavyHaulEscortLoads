@@ -1,3 +1,5 @@
+import { PROMO_COPY_LONG } from "@/lib/access";
+
 // Plain data array, not a CMS -- matches how FAQ (src/app/faq/page.tsx) and
 // pricing content are structured elsewhere in this app. Add a post by
 // appending an object here; /blog and /blog/[slug] both read from this.
@@ -42,7 +44,7 @@ export const BLOG_POSTS: BlogPost[] = [
       },
       {
         type: "p",
-        text: "HeavyHaul Escort Loads sends real text alerts, matched to your specific city and radius rather than a broad region. Posting stays free for load managers/brokers, and pilot car companies get a 30-day free trial with no card required — $17.99/month after that, or $14.99/month effective if you prepay a year.",
+        text: `HeavyHaul Escort Loads sends real text alerts, matched to your specific city and radius rather than a broad region. ${PROMO_COPY_LONG}`,
       },
       {
         type: "p",

@@ -1,12 +1,27 @@
 import { SubscriptionStatus } from "@/generated/prisma/enums";
 import { GRACE_PERIOD_DAYS } from "@/lib/subscription";
+import { PROMO_COPY_SHORT, PROMO_COPY_SUBSCRIBER, isPromoActive } from "@/lib/access";
 
 export function formatSubscriptionStatus(
   status: SubscriptionStatus,
   trialEndsAt: Date | null,
   paidStartedAt: Date | null,
-  options?: { pastDueSince?: Date | null; cancelAtPeriodEnd?: boolean; currentPeriodEnd?: Date | null }
+  options?: {
+    pastDueSince?: Date | null;
+    cancelAtPeriodEnd?: boolean;
+    currentPeriodEnd?: Date | null;
+    now?: Date;
+  }
 ): string {
+  // During the free-access promo every Pilot Car profile has access, so no
+  // trial countdown, "trial ended" or "subscribe" wording: paying
+  // subscribers get the subscriber line, everyone else the short promo line.
+  if (isPromoActive(options?.now)) {
+    return status === SubscriptionStatus.active || status === SubscriptionStatus.past_due
+      ? PROMO_COPY_SUBSCRIBER
+      : PROMO_COPY_SHORT;
+  }
+
   if (status === SubscriptionStatus.active) {
     const base = paidStartedAt
       ? `Active subscription (since ${paidStartedAt.toLocaleDateString()})`

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PilotCarProfileForm } from "@/components/pilot-car-profile-form";
+import { PROMO_COPY_SHORT, isPromoActive } from "@/lib/access";
 
 export default async function AddPilotCarPage() {
   const session = await auth();
@@ -16,7 +17,9 @@ export default async function AddPilotCarPage() {
     <div className="flex flex-col gap-4">
       <div>
         <h1 className="text-2xl font-semibold text-brand-text">Add Pilot Car access</h1>
-        <p className="text-brand-muted">Starts a 30-day free trial.</p>
+        <p className="text-brand-muted">
+          {isPromoActive() ? PROMO_COPY_SHORT : "Starts a 30-day free trial."}
+        </p>
       </div>
       <PilotCarProfileForm redirectTo="/dashboard/pilot-car" />
     </div>

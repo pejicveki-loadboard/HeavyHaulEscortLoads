@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { PROMO_COPY_LONG, formatPromoEndDate } from "@/lib/access";
 
 export const metadata: Metadata = {
   title: "FAQ — HeavyHaul Escort Loads",
@@ -8,6 +9,9 @@ export const metadata: Metadata = {
 };
 
 type QA = { q: string; a: string };
+
+// The free-access promo's end date ("March 1, 2027"), from FREE_ACCESS_UNTIL.
+const PROMO_END = formatPromoEndDate();
 type Section = { title: string; items: QA[] };
 
 const SECTIONS: Section[] = [
@@ -24,7 +28,7 @@ const SECTIONS: Section[] = [
       },
       {
         q: "Do truckers or brokers ever pay?",
-        a: "No. Only Pilot Car company accounts have a paid subscription, for load-board access.",
+        a: `No. Load posting is always free for brokers and carriers. Pilot car companies get full access free until ${PROMO_END}.`,
       },
       {
         q: "How do I actually book a job once I find a match?",
@@ -62,27 +66,27 @@ const SECTIONS: Section[] = [
     ],
   },
   {
-    title: "Pricing, trial & billing",
+    title: "Pricing & billing",
     items: [
       {
-        q: "How much does a Pilot Car subscription cost?",
-        a: "$17.99/month, or $179.88 billed once a year ($14.99/month effective — about 2 months free vs. paying monthly).",
+        q: "How much does it cost?",
+        a: PROMO_COPY_LONG,
       },
       {
         q: "Do I need a credit card to start?",
-        a: "No. Every Pilot Car account gets a 30-day free trial, no card required, on either plan.",
+        a: `No. Pilot car companies get full access free until ${PROMO_END}, with no card required.`,
       },
       {
-        q: "What happens when my trial ends?",
-        a: "You'll need an active subscription to keep browsing the load board and receiving alerts. Load posting is never affected.",
+        q: `What happens after ${PROMO_END}?`,
+        a: "Regular pricing applies from then on. We'll post it on the pricing page and let you know at least 14 days before free access ends. Load posting is never affected.",
       },
       {
         q: "Can I switch from monthly to annual?",
-        a: "Yes, effective the billing cycle after your current paid month ends — no mid-cycle proration.",
+        a: `Plan changes are paused until ${PROMO_END}. If you already have a paid plan, you keep it and won't be charged before then.`,
       },
       {
         q: "How do I cancel or manage my subscription?",
-        a: "Billing management, including cancellation, will be available from your account settings once subscriptions go live. Contact us in the meantime.",
+        a: "If you already have a paid plan, open Billing from your Pilot Car dashboard to cancel it or update your payment method.",
       },
     ],
   },

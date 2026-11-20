@@ -3,6 +3,13 @@ import "./globals.css";
 import { SiteFooter } from "@/components/site-footer";
 import { RegisterServiceWorker } from "@/components/register-service-worker";
 import { IosInstallBanner } from "@/components/ios-install-banner";
+import { PromoBanner } from "@/components/promo-banner";
+import { isPromoActive } from "@/lib/access";
+
+// Static pages are rebuilt at most an hour apart, so the promo banner,
+// pricing and every promo-only text turn off by themselves within an hour
+// of FREE_ACCESS_UNTIL, without a redeploy.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   // Needed so per-page Open Graph image/URL fields (e.g. blog posts) resolve
@@ -34,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        {isPromoActive() && <PromoBanner />}
         {children}
         <SiteFooter />
         <RegisterServiceWorker />

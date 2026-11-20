@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PROMO_COPY_SHORT, isPromoActive } from "@/lib/access";
 
 const SOCIAL_LINKS = [
   {
@@ -66,8 +67,10 @@ export function SiteFooter() {
       <p className="mx-auto max-w-2xl text-xs text-brand-muted">
         HeavyHaul Escort Loads is a nationwide marketplace connecting trucking companies and
         freight brokers hauling oversize and overweight loads with pilot car escort drivers and
-        companies. Post a load for free, or subscribe as a pilot car company to search the load
-        board, get real-time match alerts, and connect with load managers across the U.S.
+        companies.{" "}
+        {isPromoActive()
+          ? `Post a load for free. ${PROMO_COPY_SHORT}`
+          : "Post a load for free, or subscribe as a pilot car company to search the load board, get real-time match alerts, and connect with load managers across the U.S."}
       </p>
     </footer>
   );
