@@ -71,14 +71,18 @@ export function SubscribePanel() {
 
 // Shown for an active/past_due subscription -- plan switch, cancel, and a
 // link out to Stripe's Customer Portal for payment-method updates.
+// canChangePlan is false during the free-access promo (isPromoActive()):
+// the server refuses plan changes then, so the button isn't offered.
 export function ManageSubscriptionPanel({
   planInterval,
   pendingPlanInterval,
   cancelAtPeriodEnd,
+  canChangePlan,
 }: {
   planInterval: PlanInterval;
   pendingPlanInterval: PlanInterval | null;
   cancelAtPeriodEnd: boolean;
+  canChangePlan: boolean;
 }) {
   const { run, pending, error } = useBillingAction();
   const [confirmingCancel, setConfirmingCancel] = useState(false);
@@ -128,7 +132,7 @@ export function ManageSubscriptionPanel({
           Update payment method
         </button>
 
-        {!cancelAtPeriodEnd && !pendingPlanInterval && (
+        {canChangePlan && !cancelAtPeriodEnd && !pendingPlanInterval && (
           <button
             type="button"
             disabled={pending}

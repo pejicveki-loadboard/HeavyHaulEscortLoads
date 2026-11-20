@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatSubscriptionStatus } from "@/lib/trial-status";
 import { SubscriptionStatus } from "@/generated/prisma/enums";
+import { isPromoActive } from "@/lib/access";
 import { SubscribePanel, ManageSubscriptionPanel } from "@/components/billing-panel";
 
 export default async function PilotCarBillingPage({
@@ -23,6 +24,10 @@ export default async function PilotCarBillingPage({
   const hasStripeSubscription =
     profile.subscriptionStatus === SubscriptionStatus.active ||
     profile.subscriptionStatus === SubscriptionStatus.past_due;
+  // During the free-access promo nobody can start paying or switch plans
+  // (the routes refuse too), and no price is shown. Cancel and the portal
+  // stay available to existing subscribers.
+  const promo = isPromoActive();
 
   return (
     <div className="flex flex-col gap-6">
@@ -52,7 +57,10 @@ export default async function PilotCarBillingPage({
         </p>
         {profile.planInterval && (
           <p className="mt-1 text-sm text-brand-text">
-            Current plan: {profile.planInterval === "monthly" ? "Monthly ($17.99/mo)" : "Annual ($179.88/yr)"}
+            Current plan:{" "}
+            {promo
+              ? profile.planInterval === "monthly" ? "Monthly" : "Annual"
+              : profile.planInterval === "monthly" ? "Monthly ($17.99/mo)" : "Annual ($179.88/yr)"}
           </p>
         )}
         {profile.pendingPlanInterval && (
@@ -63,17 +71,22 @@ export default async function PilotCarBillingPage({
         )}
       </section>
 
-      <section className="rounded border border-brand-border bg-brand-panel p-4">
-        {hasStripeSubscription ? (
+      {hasStripeSubscription ? (
+        <section className="rounded border border-brand-border bg-brand-panel p-4">
           <ManageSubscriptionPanel
             planInterval={profile.planInterval ?? "monthly"}
             pendingPlanInterval={profile.pendingPlanInterval}
             cancelAtPeriodEnd={profile.cancelAtPeriodEnd}
+            canChangePlan={!promo}
           />
-        ) : (
-          <SubscribePanel />
-        )}
-      </section>
+        </section>
+      ) : (
+        !promo && (
+          <section className="rounded border border-brand-border bg-brand-panel p-4">
+            <SubscribePanel />
+          </section>
+        )
+      )}
     </div>
   );
 }

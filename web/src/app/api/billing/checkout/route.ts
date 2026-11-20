@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getStripe, getPriceId } from "@/lib/stripe";
 import { PlanInterval, SubscriptionStatus } from "@/generated/prisma/enums";
+import { PROMO_BLOCKED_BODY, isPromoActive } from "@/lib/access";
 
 const schema = z.object({
   interval: z.enum(PlanInterval),
@@ -13,7 +14,15 @@ const schema = z.object({
 // Not used for an existing active/past_due subscriber changing plans --
 // that's /api/billing/change-plan, which defers the switch to the next
 // billing cycle instead of starting a second subscription.
+//
+// Off during the free-access promo: nobody can start paying while access is
+// free, so no Stripe customer or Checkout session is ever created. Checked
+// before sign-in so the answer is the same for everyone.
 export async function POST(request: Request) {
+  if (isPromoActive()) {
+    return NextResponse.json(PROMO_BLOCKED_BODY, { status: 409 });
+  }
+
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });

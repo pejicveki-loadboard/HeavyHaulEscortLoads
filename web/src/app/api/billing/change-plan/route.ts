@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getStripe, getPriceId } from "@/lib/stripe";
 import { PlanInterval, SubscriptionStatus } from "@/generated/prisma/enums";
+import { PROMO_BLOCKED_BODY, isPromoActive } from "@/lib/access";
 
 const schema = z.object({
   interval: z.enum(PlanInterval),
@@ -18,7 +19,14 @@ const schema = z.object({
 // underlying subscription's price automatically when the phase boundary is
 // reached, which fires customer.subscription.updated and lets the webhook
 // sync planInterval/pendingPlanInterval.
+//
+// Off during the free-access promo (same answer as checkout), so no plan
+// switch is scheduled while access is free. Cancel and the portal stay on.
 export async function POST(request: Request) {
+  if (isPromoActive()) {
+    return NextResponse.json(PROMO_BLOCKED_BODY, { status: 409 });
+  }
+
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });

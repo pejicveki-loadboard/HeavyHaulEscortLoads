@@ -2,7 +2,19 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { SubscriptionStatus } from "@/generated/prisma/enums";
-import { FREE_ACCESS_UNTIL, accessDenialReason, accessLabel, hasAccess, type AccessProfile } from "@/lib/access";
+import {
+  FREE_ACCESS_UNTIL,
+  PROMO_BLOCKED_BODY,
+  PROMO_COPY_LONG,
+  PROMO_COPY_SHORT,
+  PROMO_COPY_SUBSCRIBER,
+  accessDenialReason,
+  accessLabel,
+  formatPromoEndDate,
+  hasAccess,
+  isPromoActive,
+  type AccessProfile,
+} from "@/lib/access";
 
 const DAY = 24 * 60 * 60 * 1000;
 const DURING_PROMO = new Date(FREE_ACCESS_UNTIL.getTime() - 10 * DAY);
@@ -90,5 +102,32 @@ describe("accessLabel", () => {
       "Trial"
     );
     assert.equal(accessLabel(expiredTrial(AFTER_PROMO), AFTER_PROMO), "Expired");
+  });
+});
+
+describe("isPromoActive", () => {
+  it("is on before FREE_ACCESS_UNTIL and off from it on", () => {
+    assert.equal(isPromoActive(DURING_PROMO), true);
+    assert.equal(isPromoActive(new Date(FREE_ACCESS_UNTIL.getTime() - 1)), true);
+    assert.equal(isPromoActive(FREE_ACCESS_UNTIL), false);
+    assert.equal(isPromoActive(AFTER_PROMO), false);
+  });
+});
+
+describe("promo copy", () => {
+  it("prints the end date in Central time", () => {
+    assert.equal(formatPromoEndDate(), "March 1, 2027");
+    // Moving the constant moves every date in the copy.
+    assert.equal(formatPromoEndDate(new Date("2027-06-01T05:00:00Z")), "June 1, 2027");
+  });
+
+  it("uses the standard copy word for word", () => {
+    assert.equal(PROMO_COPY_SHORT, "Free for everyone until March 1, 2027. No card required.");
+    assert.equal(
+      PROMO_COPY_LONG,
+      "Free for everyone until March 1, 2027. We're building up the Load Manager side of the marketplace, so pilot car companies get full access free, with no card required. Load posting is always free for brokers and carriers."
+    );
+    assert.equal(PROMO_COPY_SUBSCRIBER, "You're on free access until March 1, 2027. You won't be charged before then.");
+    assert.deepEqual(PROMO_BLOCKED_BODY, { error: "free_access_promo", message: PROMO_COPY_SHORT });
   });
 });
