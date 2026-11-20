@@ -10,7 +10,10 @@
     "postinstall": "prisma generate",
     "stripe:setup": "node scripts/setup-stripe-products.mjs",
     "seed:loads": "tsx scripts/seed-loads.mjs",
-    "backfill:city-names": "tsx scripts/backfill-city-names.mjs"
+    "backfill:city-names": "tsx scripts/backfill-city-names.mjs",
+    "db:migrate:dev": "node scripts/db-migrate-dev.mjs",
+    "db:deploy:prod": "node scripts/db-deploy-prod.mjs",
+    "db:seed:dev": "tsx scripts/seed-dev.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
