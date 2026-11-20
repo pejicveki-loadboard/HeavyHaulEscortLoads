@@ -243,7 +243,9 @@ export function BrowseLoadsPanel({
       {results && (
         <div className="flex flex-col gap-3">
           {results.length === 0 && (
-            <p className="text-sm text-brand-muted">No open loads match that search.</p>
+            <p className="text-sm text-brand-muted">
+              No loads currently match this search — check back soon, or try a wider radius.
+            </p>
           )}
           {results.map((load) => (
             <div key={load.id} className="rounded border border-brand-border bg-brand-panel p-4">
