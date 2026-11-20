@@ -1,6 +1,8 @@
 # Terms of Use
 
-**Effective Date:** August 23, 2026
+**Effective Date:** August 28, 2026
+
+**Last updated:** November 2026
 
 ## 1. Who We Are
 
@@ -19,7 +21,7 @@ A single account may hold either or both profile types.
 
 Load posting is free for Load Managers, unlimited, with no subscription or payment required, now or in the future for that side of the platform.
 
-Pilot Car Company access to the load board (search, real-time alerts, and contact-reveal) requires an active subscription after a 30-day free trial. No payment method is required to start the trial.
+Pilot Car Company access to the load board (search, real-time alerts, and contact-reveal) requires an active subscription, except during the free access promotion described in Section 6.
 
 ## 3. We Are Not a Party to Any Deal
 
@@ -48,7 +50,10 @@ We may suspend or terminate any account that violates these terms, at our discre
 
 ## 6. Fees and Payment
 
-Pilot Car Company subscriptions are billed at the rates shown on our [Pricing page](/pricing), which may change with notice: $17.99/month billed monthly, or $179.88 billed once a year (equivalent to $14.99/month). By subscribing, you authorize us to charge your payment method on file for the applicable amount at the start of each billing period.
+<!-- keep in sync with FREE_ACCESS_UNTIL in web/src/lib/access.ts -->
+**Free access promotion.** Until March 1, 2027, pilot car company accounts have full access at no charge and no payment method is required. Subscribers with an existing paid plan will not be charged during the promotion; billing resumes on March 1, 2027 unless cancelled. We will notify users at least 14 days before the promotion ends, including any pricing that will apply afterward. We may extend the promotion at our discretion.
+
+After the promotion, Pilot Car Company subscriptions are billed at the rates shown on our [Pricing page](/pricing), which may change with notice. By subscribing, you authorize us to charge your payment method on file for the applicable amount at the start of each billing period.
 
 **Switching from monthly to annual** takes effect at the start of the billing cycle following your current paid month — there is no mid-cycle proration; you keep your current monthly access through the period you've already paid for, then annual billing begins.
 
@@ -76,7 +81,21 @@ These Terms are governed by the laws of the State of Minnesota, without regard t
 
 We may update these terms from time to time. Material changes will be posted on this page with an updated effective date.
 
-## 11. Contact
+## 11. Text Messaging (SMS) Program
+
+Pilot Car Company users may opt in to receive automated text message alerts ("HeavyHaul Escort Loads Load-Match SMS Alerts") for loads matching a saved search location. Opt-in happens from within your authenticated account, on the Search Locations page of your dashboard — each saved search location has its own SMS alert checkbox, unchecked by default, with the consent language shown directly beside it. Email alerts remain available with no SMS consent required, and SMS alerts are never required to use the Platform.
+
+- **What you're opting into:** automated text messages from HeavyHaul Escort Loads about load matches for that search location.
+- **How you opt in:** check the SMS alerts box for a saved search location while logged in to your Pilot Car Company account. Consent is given separately for each search location.
+- **Message frequency:** recurring; varies based on how many loads match your saved search criteria.
+- **Message and data rates may apply.**
+- **Opt out:** reply STOP (also CANCEL, QUIT, UNSUBSCRIBE, STOPALL, REVOKE, or END) to any message to stop SMS alerts to that number at any time. Reply START to resume.
+- **Help:** reply HELP to any message, or contact info@heavyhaulescortloads.com.
+- No mobile information is shared with third parties or affiliates for their marketing or promotional purposes.
+
+See our [Privacy Policy](/privacy) for how we handle your phone number and other information.
+
+## 12. Contact
 
 Questions about these terms: info@heavyhaulescortloads.com, or see our [Contact page](/contact).
 

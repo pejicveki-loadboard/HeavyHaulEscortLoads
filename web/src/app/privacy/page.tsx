@@ -9,10 +9,13 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE_DATE = "August 28, 2026";
+const LAST_UPDATED = "November 2026";
 
 const PRIVACY_MD = `# Privacy Policy
 
 **Effective Date:** ${EFFECTIVE_DATE}
+
+**Last updated:** ${LAST_UPDATED}
 
 ## 1. Who This Applies To
 
@@ -37,7 +40,7 @@ This policy covers information collected by HeavyHaul Escort Loads (heavyhaulesc
 - To operate the core matching service: showing Load Managers to Pilot Car Companies whose search criteria match, and sending real-time alerts.
 - To verify accounts (email verification) and manage your subscription/trial status.
 - To respond to support requests submitted via the Contact page.
-- To communicate with you about your account (e.g., trial ending, service updates).
+- To send you account and service emails, such as notices about changes to your access or billing.
 
 We do not sell your personal information.
 

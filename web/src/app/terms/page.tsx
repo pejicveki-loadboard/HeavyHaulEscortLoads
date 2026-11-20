@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { LegalMarkdown } from "@/components/legal-markdown";
+import { formatPromoEndDate } from "@/lib/access";
 
 export const metadata: Metadata = {
   title: "Terms of Use — HeavyHaul Escort Loads",
@@ -9,10 +10,16 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE_DATE = "August 28, 2026";
+const LAST_UPDATED = "November 2026";
+// The free-access promotion's end date ("March 1, 2027"), from FREE_ACCESS_UNTIL.
+// The copy in /legal/*.md types it out; keep the two in sync.
+const PROMO_END = formatPromoEndDate();
 
 const TERMS_MD = `# Terms of Use
 
 **Effective Date:** ${EFFECTIVE_DATE}
+
+**Last updated:** ${LAST_UPDATED}
 
 ## 1. Who We Are
 
@@ -31,7 +38,7 @@ A single account may hold either or both profile types.
 
 Load posting is free for Load Managers, unlimited, with no subscription or payment required, now or in the future for that side of the platform.
 
-Pilot Car Company access to the load board (search, real-time alerts, and contact-reveal) requires an active subscription after a 30-day free trial. No payment method is required to start the trial.
+Pilot Car Company access to the load board (search, real-time alerts, and contact-reveal) requires an active subscription, except during the free access promotion described in Section 6.
 
 ## 3. We Are Not a Party to Any Deal
 
@@ -60,7 +67,9 @@ We may suspend or terminate any account that violates these terms, at our discre
 
 ## 6. Fees and Payment
 
-Pilot Car Company subscriptions are billed at the rates shown on our [Pricing page](/pricing), which may change with notice: $17.99/month billed monthly, or $179.88 billed once a year (equivalent to $14.99/month). By subscribing, you authorize us to charge your payment method on file for the applicable amount at the start of each billing period.
+**Free access promotion.** Until ${PROMO_END}, pilot car company accounts have full access at no charge and no payment method is required. Subscribers with an existing paid plan will not be charged during the promotion; billing resumes on ${PROMO_END} unless cancelled. We will notify users at least 14 days before the promotion ends, including any pricing that will apply afterward. We may extend the promotion at our discretion.
+
+After the promotion, Pilot Car Company subscriptions are billed at the rates shown on our [Pricing page](/pricing), which may change with notice. By subscribing, you authorize us to charge your payment method on file for the applicable amount at the start of each billing period.
 
 **Switching from monthly to annual** takes effect at the start of the billing cycle following your current paid month — there is no mid-cycle proration; you keep your current monthly access through the period you've already paid for, then annual billing begins.
 

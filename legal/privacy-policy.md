@@ -1,6 +1,8 @@
 # Privacy Policy
 
-**Effective Date:** August 23, 2026
+**Effective Date:** August 28, 2026
+
+**Last updated:** November 2026
 
 ## 1. Who This Applies To
 
@@ -25,7 +27,7 @@ This policy covers information collected by HeavyHaul Escort Loads (heavyhaulesc
 - To operate the core matching service: showing Load Managers to Pilot Car Companies whose search criteria match, and sending real-time alerts.
 - To verify accounts (email verification) and manage your subscription/trial status.
 - To respond to support requests submitted via the Contact page.
-- To communicate with you about your account (e.g., trial ending, service updates).
+- To send you account and service emails, such as notices about changes to your access or billing.
 
 We do not sell your personal information.
 
@@ -42,6 +44,8 @@ We do not sell your personal information.
 - **Stripe** — will process subscription payments once live.
 
 We do not share your information with these providers for their own marketing purposes.
+
+**Text message (SMS) alerts.** If you opt in to SMS load-match alerts ("HeavyHaul Escort Loads Load-Match SMS Alerts"), we use your phone number only to send those alerts through Twilio. Opt-in happens from within your authenticated Pilot Car Company account, on the Search Locations page, via a per-search-location consent checkbox that is unchecked by default. We do not sell or share your mobile number with any third party for their own marketing purposes. Message frequency is recurring and varies based on how many loads match your saved search criteria. Message and data rates may apply. Reply HELP for help or STOP to cancel at any time — see our [Terms of Use](/terms) for the full program terms.
 
 **When required by law**, or to protect the rights, safety, or property of HeavyHaul Escort Loads, our users, or the public.
 
