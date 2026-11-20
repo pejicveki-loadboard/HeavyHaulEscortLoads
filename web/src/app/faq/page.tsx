@@ -1,7 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { PROMO_COPY_LONG, formatPromoEndDate } from "@/lib/access";
+import { PROMO_COPY_LONG, formatPromoEndDate, isPromoActive } from "@/lib/access";
+
+// Rebuilt at most hourly (ISR) so promo-dependent copy switches off by itself
+// within an hour of FREE_ACCESS_UNTIL. The root layout sets the same value;
+// it's repeated here so this page doesn't silently depend on it.
+export const revalidate = 3600;
+
 
 export const metadata: Metadata = {
   title: "FAQ — HeavyHaul Escort Loads",
@@ -14,139 +20,174 @@ type QA = { q: string; a: string };
 const PROMO_END = formatPromoEndDate();
 type Section = { title: string; items: QA[] };
 
-const SECTIONS: Section[] = [
-  {
-    title: "How the marketplace works",
-    items: [
-      {
-        q: "What is HeavyHaul Escort Loads?",
-        a: "A marketplace connecting truckers and brokers hauling oversize/overweight loads with pilot car (escort) drivers and companies.",
-      },
-      {
-        q: "Is posting a load actually free?",
-        a: "Yes, always, for every Load Manager account — unlimited posts, no subscription, no card.",
-      },
-      {
-        q: "Do truckers or brokers ever pay?",
-        a: `No. Load posting is always free for brokers and carriers. Pilot car companies get full access free until ${PROMO_END}.`,
-      },
-      {
-        q: "How do I actually book a job once I find a match?",
-        a: "HeavyHaul is a matching layer, not a broker. Once you reveal contact info, you negotiate and finalize the job directly with the other party, off-platform.",
-      },
-    ],
-  },
-  {
-    title: "Getting started & your account",
-    items: [
-      {
-        q: "How do I sign up?",
-        a: "One email/login. Choose a Load Manager profile, a Pilot Car profile, or both.",
-      },
-      {
-        q: "Do I need to verify my email?",
-        a: "Yes, click the link in your signup email. If it doesn't arrive, resend it from your dashboard.",
-      },
-      {
-        q: "How do I know what type of account I have?",
-        a: "Your dashboard shows which profile(s) are active on your account.",
-      },
-      {
-        q: "Can I sign up for both account types?",
-        a: "Yes — one login can hold both a Load Manager and a Pilot Car profile, unlike some competitors that require two separate emails.",
-      },
-      {
-        q: "What if I signed up as the wrong account type?",
-        a: "Add the correct profile type to your existing account anytime; no need to create a new account.",
-      },
-      {
-        q: "Is there a mobile app?",
-        a: "Not yet — the site works on mobile browsers today.",
-      },
-    ],
-  },
-  {
-    title: "Pricing & billing",
-    items: [
-      {
-        q: "How much does it cost?",
-        a: PROMO_COPY_LONG,
-      },
-      {
-        q: "Do I need a credit card to start?",
-        a: `No. Pilot car companies get full access free until ${PROMO_END}, with no card required.`,
-      },
-      {
-        q: `What happens after ${PROMO_END}?`,
-        a: "Regular pricing applies from then on. We'll post it on the pricing page and let you know at least 14 days before free access ends. Load posting is never affected.",
-      },
-      {
-        q: "Can I switch from monthly to annual?",
-        a: `Plan changes are paused until ${PROMO_END}. If you already have a paid plan, you keep it and won't be charged before then.`,
-      },
-      {
-        q: "How do I cancel or manage my subscription?",
-        a: "If you already have a paid plan, open Billing from your Pilot Car dashboard to cancel it or update your payment method.",
-      },
-    ],
-  },
-  {
-    title: "Search, alerts & the load board",
-    items: [
-      {
-        q: "How does radius search work?",
-        a: "Set a search location (city/region), a radius, and the escort position you're looking for (lead/chase/high-pole). You can set up multiple search locations.",
-      },
-      {
-        q: "How will I know about a new matching load?",
-        a: "A real-time alert fires the moment a posted load matches one of your search locations.",
-      },
-      {
-        q: "Can I choose email, SMS, or both?",
-        a: "Each search location has its own channel preference — choose email, SMS, or both. Both channels are fully live today.",
-      },
-      {
-        q: "Why am I not receiving alerts?",
-        a: "Check that the search location is active (not muted/paused), check your channel preference, and check your spam folder.",
-      },
-      {
-        q: "How do I pause alerts for a location?",
-        a: "Mark it inactive/muted from your dashboard anytime, or delete it.",
-      },
-      {
-        q: 'What does "open" vs. "covered" mean on a load?',
-        a: "Open means it still needs a pilot car; covered means the Load Manager marked it filled. Covered loads stop generating alerts, but a Load Manager can reopen one if it falls through.",
-      },
-      {
-        q: "Do I need certification to work as a pilot car escort?",
-        a: "Requirements vary by state; many require certified P/EVO training. HeavyHaul doesn't currently verify certifications or insurance on profiles — you're responsible for meeting your state's requirements for the loads you take.",
-      },
-    ],
-  },
-  {
-    title: "Posting a load (Load Managers)",
-    items: [
-      {
-        q: "How do I post a load?",
-        a: "From your dashboard, fill in origin, destination, dates, dimensions, and escort position needed.",
-      },
-      {
-        q: "Do I need to mark my load as covered once it's filled?",
-        a: "Yes, recommended — it stops further alerts and keeps the board accurate.",
-      },
-      {
-        q: "I made a mistake on a posted load — can I fix it?",
-        a: "Yes, edit it anytime from your dashboard. Changing the origin or escort position re-triggers matching alerts.",
-      },
-      {
-        q: "How do I contact support or report a problem?",
-        a: "Email info@heavyhaulescortloads.com. Since deals and payment happen directly between parties off-platform, handle contract terms directly — but let us know about any bad actors so we can look into it.",
-      },
-    ],
-  },
-];
+// Pricing answers while the free-access promo runs.
+const PRICING_PROMO: Section = {
+  title: "Pricing & billing",
+  items: [
+    {
+      q: "How much does it cost?",
+      a: PROMO_COPY_LONG,
+    },
+    {
+      q: "Do I need a credit card to start?",
+      a: `No. Pilot car companies get full access free until ${PROMO_END}, with no card required.`,
+    },
+    {
+      q: `What happens after ${PROMO_END}?`,
+      a: "Regular pricing applies from then on. We'll post it on the pricing page and let you know at least 14 days before free access ends. Load posting is never affected.",
+    },
+    {
+      q: "Can I switch from monthly to annual?",
+      a: `Plan changes are paused until ${PROMO_END}. If you already have a paid plan, you keep it and won't be charged before then.`,
+    },
+    {
+      q: "How do I cancel or manage my subscription?",
+      a: "If you already have a paid plan, open Billing from your Pilot Car dashboard to cancel it or update your payment method.",
+    },
+  ],
+};
+
+// Regular pricing answers, before and after the promo.
+const PRICING_REGULAR: Section = {
+  title: "Pricing, trial & billing",
+  items: [
+    {
+      q: "How much does a Pilot Car subscription cost?",
+      a: "$17.99/month, or $179.88 billed once a year ($14.99/month effective — about 2 months free vs. paying monthly).",
+    },
+    {
+      q: "Do I need a credit card to start?",
+      a: "No. Every Pilot Car account gets a 30-day free trial, no card required, on either plan.",
+    },
+    {
+      q: "What happens when my trial ends?",
+      a: "You'll need an active subscription to keep browsing the load board and receiving alerts. Load posting is never affected.",
+    },
+    {
+      q: "Can I switch from monthly to annual?",
+      a: "Yes, effective the billing cycle after your current paid month ends — no mid-cycle proration.",
+    },
+    {
+      q: "How do I cancel or manage my subscription?",
+      a: "Open Billing from your Pilot Car dashboard to cancel or update your payment method.",
+    },
+  ],
+};
+
+// Built per render (not once at module load) so the pricing answers switch
+// back to regular pricing by themselves when the promo ends.
+function getSections(promo: boolean): Section[] {
+  return [
+    {
+      title: "How the marketplace works",
+      items: [
+        {
+          q: "What is HeavyHaul Escort Loads?",
+          a: "A marketplace connecting truckers and brokers hauling oversize/overweight loads with pilot car (escort) drivers and companies.",
+        },
+        {
+          q: "Is posting a load actually free?",
+          a: "Yes, always, for every Load Manager account — unlimited posts, no subscription, no card.",
+        },
+        {
+          q: "Do truckers or brokers ever pay?",
+          a: `No. Load posting is always free for brokers and carriers. Pilot car companies get full access free until ${PROMO_END}.`,
+        },
+        {
+          q: "How do I actually book a job once I find a match?",
+          a: "HeavyHaul is a matching layer, not a broker. Once you reveal contact info, you negotiate and finalize the job directly with the other party, off-platform.",
+        },
+      ],
+    },
+    {
+      title: "Getting started & your account",
+      items: [
+        {
+          q: "How do I sign up?",
+          a: "One email/login. Choose a Load Manager profile, a Pilot Car profile, or both.",
+        },
+        {
+          q: "Do I need to verify my email?",
+          a: "Yes, click the link in your signup email. If it doesn't arrive, resend it from your dashboard.",
+        },
+        {
+          q: "How do I know what type of account I have?",
+          a: "Your dashboard shows which profile(s) are active on your account.",
+        },
+        {
+          q: "Can I sign up for both account types?",
+          a: "Yes — one login can hold both a Load Manager and a Pilot Car profile, unlike some competitors that require two separate emails.",
+        },
+        {
+          q: "What if I signed up as the wrong account type?",
+          a: "Add the correct profile type to your existing account anytime; no need to create a new account.",
+        },
+        {
+          q: "Is there a mobile app?",
+          a: "Not yet — the site works on mobile browsers today.",
+        },
+      ],
+    },
+    promo ? PRICING_PROMO : PRICING_REGULAR,
+    {
+      title: "Search, alerts & the load board",
+      items: [
+        {
+          q: "How does radius search work?",
+          a: "Set a search location (city/region), a radius, and the escort position you're looking for (lead/chase/high-pole). You can set up multiple search locations.",
+        },
+        {
+          q: "How will I know about a new matching load?",
+          a: "A real-time alert fires the moment a posted load matches one of your search locations.",
+        },
+        {
+          q: "Can I choose email, SMS, or both?",
+          a: "Each search location has its own channel preference — choose email, SMS, or both. Both channels are fully live today.",
+        },
+        {
+          q: "Why am I not receiving alerts?",
+          a: "Check that the search location is active (not muted/paused), check your channel preference, and check your spam folder.",
+        },
+        {
+          q: "How do I pause alerts for a location?",
+          a: "Mark it inactive/muted from your dashboard anytime, or delete it.",
+        },
+        {
+          q: 'What does "open" vs. "covered" mean on a load?',
+          a: "Open means it still needs a pilot car; covered means the Load Manager marked it filled. Covered loads stop generating alerts, but a Load Manager can reopen one if it falls through.",
+        },
+        {
+          q: "Do I need certification to work as a pilot car escort?",
+          a: "Requirements vary by state; many require certified P/EVO training. HeavyHaul doesn't currently verify certifications or insurance on profiles — you're responsible for meeting your state's requirements for the loads you take.",
+        },
+      ],
+    },
+    {
+      title: "Posting a load (Load Managers)",
+      items: [
+        {
+          q: "How do I post a load?",
+          a: "From your dashboard, fill in origin, destination, dates, dimensions, and escort position needed.",
+        },
+        {
+          q: "Do I need to mark my load as covered once it's filled?",
+          a: "Yes, recommended — it stops further alerts and keeps the board accurate.",
+        },
+        {
+          q: "I made a mistake on a posted load — can I fix it?",
+          a: "Yes, edit it anytime from your dashboard. Changing the origin or escort position re-triggers matching alerts.",
+        },
+        {
+          q: "How do I contact support or report a problem?",
+          a: "Email info@heavyhaulescortloads.com. Since deals and payment happen directly between parties off-platform, handle contract terms directly — but let us know about any bad actors so we can look into it.",
+        },
+      ],
+    },
+  ];
+}
 
 export default function FaqPage() {
+  const SECTIONS = getSections(isPromoActive());
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",

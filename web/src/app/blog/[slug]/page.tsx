@@ -4,6 +4,13 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { BLOG_POSTS, getPostBySlug, type BlogBlock } from "@/lib/blog-posts";
+import { isPromoActive } from "@/lib/access";
+
+// Rebuilt at most hourly (ISR) so promo-dependent copy switches off by itself
+// within an hour of FREE_ACCESS_UNTIL. The root layout sets the same value;
+// it's repeated here so this page doesn't silently depend on it.
+export const revalidate = 3600;
+
 
 export function generateStaticParams() {
   return BLOG_POSTS.map((post) => ({ slug: post.slug }));
@@ -92,7 +99,7 @@ function BlogBody({ block, index }: { block: BlogBlock; index: number }) {
     default:
       return (
         <p key={index} className="text-brand-text">
-          {renderInline(block.text)}
+          {renderInline(block.promoText && isPromoActive() ? block.promoText : block.text)}
         </p>
       );
   }

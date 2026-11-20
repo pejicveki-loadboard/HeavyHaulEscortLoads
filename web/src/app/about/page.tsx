@@ -1,7 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { PROMO_COPY_LONG } from "@/lib/access";
+import { PROMO_COPY_LONG, isPromoActive } from "@/lib/access";
+
+// Rebuilt at most hourly (ISR) so promo-dependent copy switches off by itself
+// within an hour of FREE_ACCESS_UNTIL. The root layout sets the same value;
+// it's repeated here so this page doesn't silently depend on it.
+export const revalidate = 3600;
+
 
 export const metadata: Metadata = {
   title: "About HeavyHaul Escort Loads | Nationwide Pilot Car & Oversize Load Marketplace",
@@ -61,7 +67,10 @@ export default function AboutPage() {
         <p className="text-brand-text">
           Search the load board by city and radius, filter by escort position — lead, chase, or
           high pole — and get real-time email and SMS alerts the moment a matching load posts, so
-          you&apos;re never missing work in your service area. {PROMO_COPY_LONG}
+          you&apos;re never missing work in your service area.{" "}
+          {isPromoActive()
+            ? PROMO_COPY_LONG
+            : "Every pilot car account starts with a 30-day free trial, no credit card required, on either our monthly or annual plan."}
         </p>
 
         <h2 className="mt-4 text-xl font-semibold text-brand-text">Why HeavyHaul Escort Loads</h2>

@@ -3,6 +3,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { PROMO_COPY_LONG, PROMO_COPY_SHORT, formatPromoEndDate, isPromoActive } from "@/lib/access";
 
+// Rebuilt at most hourly (ISR) so promo-dependent copy switches off by itself
+// within an hour of FREE_ACCESS_UNTIL. The root layout sets the same value;
+// it's repeated here so this page doesn't silently depend on it.
+export const revalidate = 3600;
+
+
 // A function, not a constant, so the description follows the promo: the page
 // is rebuilt at least hourly (root layout), and flips back to the regular
 // one by itself once FREE_ACCESS_UNTIL passes.

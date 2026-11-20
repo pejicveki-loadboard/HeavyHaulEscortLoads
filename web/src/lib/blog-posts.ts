@@ -10,7 +10,9 @@ import { PROMO_COPY_LONG } from "@/lib/access";
 // Inline **bold** / *italic* markers inside block text are still supported
 // (see renderInline in blog/[slug]/page.tsx).
 export type BlogBlock =
-  | { type: "p"; text: string }
+  // promoText, when set, replaces text while the free-access promo runs
+  // (isPromoActive()); text is what shows before and after it.
+  | { type: "p"; text: string; promoText?: string }
   | { type: "h2"; text: string }
   | { type: "blockquote"; text: string }
   | { type: "table"; headers: string[]; rows: string[][] }
@@ -44,7 +46,8 @@ export const BLOG_POSTS: BlogPost[] = [
       },
       {
         type: "p",
-        text: `HeavyHaul Escort Loads sends real text alerts, matched to your specific city and radius rather than a broad region. ${PROMO_COPY_LONG}`,
+        text: "HeavyHaul Escort Loads sends real text alerts, matched to your specific city and radius rather than a broad region. Posting stays free for load managers/brokers, and pilot car companies get a 30-day free trial with no card required — $17.99/month after that, or $14.99/month effective if you prepay a year.",
+        promoText: `HeavyHaul Escort Loads sends real text alerts, matched to your specific city and radius rather than a broad region. ${PROMO_COPY_LONG}`,
       },
       {
         type: "p",
