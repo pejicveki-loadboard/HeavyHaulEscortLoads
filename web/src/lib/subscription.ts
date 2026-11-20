@@ -6,27 +6,34 @@ import { SubscriptionStatus } from "@/generated/prisma/enums";
 // it ourselves off pastDueSince, set by the invoice.payment_failed webhook).
 export const GRACE_PERIOD_DAYS = 3;
 
-function inGracePeriod(pastDueSince: Date | null): boolean {
+function inGracePeriod(pastDueSince: Date | null, now: Date): boolean {
   if (!pastDueSince) return false;
   const graceEndsAt = pastDueSince.getTime() + GRACE_PERIOD_DAYS * 24 * 60 * 60 * 1000;
-  return Date.now() < graceEndsAt;
+  return now.getTime() < graceEndsAt;
 }
 
 // "trialing (and not expired), active, or past_due within its 3-day grace
 // window only" -- see PHASE1_PLAN.md's access control model. Load-board
 // endpoints (search, load list, load detail, contact info) must check this
 // server-side on every request.
-export function hasLoadBoardAccess(profile: {
-  subscriptionStatus: SubscriptionStatus;
-  trialEndsAt: Date | null;
-  pastDueSince?: Date | null;
-}): boolean {
+//
+// This is the BILLING rule only. Callers deciding real access must use
+// hasAccess() in src/lib/access.ts, which layers the admin switch and the
+// free-access promo on top of this. `now` is injectable for tests.
+export function hasLoadBoardAccess(
+  profile: {
+    subscriptionStatus: SubscriptionStatus;
+    trialEndsAt: Date | null;
+    pastDueSince?: Date | null;
+  },
+  now: Date = new Date()
+): boolean {
   if (profile.subscriptionStatus === SubscriptionStatus.active) return true;
   if (profile.subscriptionStatus === SubscriptionStatus.trialing) {
-    return !!profile.trialEndsAt && profile.trialEndsAt.getTime() > Date.now();
+    return !!profile.trialEndsAt && profile.trialEndsAt.getTime() > now.getTime();
   }
   if (profile.subscriptionStatus === SubscriptionStatus.past_due) {
-    return inGracePeriod(profile.pastDueSince ?? null);
+    return inGracePeriod(profile.pastDueSince ?? null, now);
   }
   return false;
 }
@@ -38,17 +45,20 @@ export function hasLoadBoardAccess(profile: {
 // Week 3 admin dashboard uses this instead of the raw column for both the
 // summary breakdown and the Users table's displayed status -- same logic as
 // hasLoadBoardAccess, just returning the enum value instead of a boolean.
-export function effectiveSubscriptionStatus(profile: {
-  subscriptionStatus: SubscriptionStatus;
-  trialEndsAt: Date | null;
-  pastDueSince?: Date | null;
-}): SubscriptionStatus {
+export function effectiveSubscriptionStatus(
+  profile: {
+    subscriptionStatus: SubscriptionStatus;
+    trialEndsAt: Date | null;
+    pastDueSince?: Date | null;
+  },
+  now: Date = new Date()
+): SubscriptionStatus {
   if (profile.subscriptionStatus === SubscriptionStatus.trialing) {
-    const stillTrialing = !!profile.trialEndsAt && profile.trialEndsAt.getTime() > Date.now();
+    const stillTrialing = !!profile.trialEndsAt && profile.trialEndsAt.getTime() > now.getTime();
     return stillTrialing ? SubscriptionStatus.trialing : SubscriptionStatus.expired;
   }
   if (profile.subscriptionStatus === SubscriptionStatus.past_due) {
-    return inGracePeriod(profile.pastDueSince ?? null)
+    return inGracePeriod(profile.pastDueSince ?? null, now)
       ? SubscriptionStatus.past_due
       : SubscriptionStatus.expired;
   }
