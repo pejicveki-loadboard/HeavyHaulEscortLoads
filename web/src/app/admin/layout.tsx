@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!user?.isAdmin) forbidden();
 
   return (
-    <main className="mx-auto max-w-4xl p-6">
+    <main className="mx-auto max-w-7xl p-6">
       <header className="mb-6 flex flex-col items-start gap-4 border-b border-brand-border pb-4">
         <Link href="/admin" className="shrink-0">
           <Image

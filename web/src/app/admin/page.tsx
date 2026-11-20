@@ -4,9 +4,19 @@ import { effectiveSubscriptionStatus } from "@/lib/subscription";
 import { MAX_ATTEMPTS } from "@/lib/load-matching";
 import { AlertSendStatus, SubscriptionStatus } from "@/generated/prisma/enums";
 import { BuildingIcon, CarIcon, TruckIcon } from "@/components/icons";
+import { FREE_ACCESS_UNTIL } from "@/lib/access";
 
 export default async function AdminSummaryPage() {
-  const [loadManagerCount, pilotCarCount, loadCount, pilotCarProfiles, failedAlertCount] = await Promise.all([
+  const now = new Date();
+  const [
+    loadManagerCount,
+    pilotCarCount,
+    loadCount,
+    pilotCarProfiles,
+    failedAlertCount,
+    accessOffCount,
+    grantedCount,
+  ] = await Promise.all([
     prisma.loadManagerProfile.count(),
     prisma.pilotCarProfile.count(),
     prisma.load.count(),
@@ -14,7 +24,10 @@ export default async function AdminSummaryPage() {
       select: { subscriptionStatus: true, trialEndsAt: true, pastDueSince: true },
     }),
     prisma.loadAlert.count({ where: { status: AlertSendStatus.failed, attempts: { gte: MAX_ATTEMPTS } } }),
+    prisma.pilotCarProfile.count({ where: { accessEnabled: false } }),
+    prisma.pilotCarProfile.count({ where: { freeAccessUntil: { gt: now } } }),
   ]);
+  const promoActive = now.getTime() < FREE_ACCESS_UNTIL.getTime();
 
   const breakdown: Record<SubscriptionStatus, number> = {
     none: 0,
@@ -24,7 +37,7 @@ export default async function AdminSummaryPage() {
     expired: 0,
   };
   for (const profile of pilotCarProfiles) {
-    breakdown[effectiveSubscriptionStatus(profile)]++;
+    breakdown[effectiveSubscriptionStatus(profile, now)]++;
   }
 
   return (
@@ -47,6 +60,32 @@ export default async function AdminSummaryPage() {
           <p className="text-sm text-brand-muted">Loads posted</p>
           <p className="text-2xl font-semibold text-brand-text">{loadCount}</p>
         </div>
+      </div>
+
+      <div className="rounded border border-brand-border bg-brand-panel p-4">
+        <h2 className="mb-2 font-semibold text-brand-text">Pilot Car access</h2>
+        <p className="mb-3 text-sm text-brand-muted">
+          {promoActive
+            ? `Free-access promo is ON until ${FREE_ACCESS_UNTIL.toLocaleString("en-US", { timeZone: "America/Chicago", dateStyle: "medium", timeStyle: "short" })} Central: every profile with access switched on can use the load board.`
+            : "Free-access promo has ended: access follows grants, trials and subscriptions."}
+        </p>
+        <ul className="flex flex-wrap gap-6 text-sm">
+          <li>
+            <Link href="/admin/users?pcAccess=on" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
+              <strong>{pilotCarCount - accessOffCount}</strong> access on
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/users?pcAccess=off" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
+              <strong>{accessOffCount}</strong> access off (admin)
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/users?pcAccess=granted" className="text-brand-accent underline transition-colors duration-150 hover:text-brand-accent-light active:text-brand-accent-deep">
+              <strong>{grantedCount}</strong> free-granted
+            </Link>
+          </li>
+        </ul>
       </div>
 
       <div className="rounded border border-brand-border bg-brand-panel p-4">
