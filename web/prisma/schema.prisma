@@ -208,6 +208,23 @@ model PilotCarProfile {
   // outstanding payment failure.
   pastDueSince DateTime? @map("past_due_since")
 
+  // -- Admin access controls (free-access promo, added 2026-11) --
+  // All access decisions go through hasAccess() in src/lib/access.ts.
+  //
+  // Admin kill switch: false denies load-board access and alerts even to a
+  // paying subscriber or during the promo.
+  accessEnabled     Boolean   @default(true) @map("access_enabled")
+  // Per-profile free access granted by an admin, honored after the global
+  // promo (FREE_ACCESS_UNTIL) ends. Null means no grant.
+  freeAccessUntil   DateTime? @map("free_access_until")
+  // Free-text admin note explaining the current access state.
+  accessNote        String?   @map("access_note")
+  // Audit trail of the last admin change to any of the fields above.
+  // accessUpdatedById is the admin's User.id (plain column, no FK, so
+  // deleting an admin never touches pilot car rows).
+  accessUpdatedAt   DateTime? @map("access_updated_at")
+  accessUpdatedById String?   @map("access_updated_by_id")
+
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   searchLocations SearchLocation[]
 
