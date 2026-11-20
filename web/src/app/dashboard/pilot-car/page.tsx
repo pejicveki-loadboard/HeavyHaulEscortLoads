@@ -3,7 +3,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatSubscriptionStatus } from "@/lib/trial-status";
-import { hasLoadBoardAccess } from "@/lib/subscription";
+import { ACCESS_PAUSED_MESSAGE, accessDenialReason } from "@/lib/access";
 import { ESCORT_POSITIONS } from "@/lib/escort-positions";
 import { BrowseLoadsPanel } from "@/components/browse-loads-panel";
 
@@ -27,6 +27,7 @@ export default async function PilotCarDashboardPage({
     orderBy: { createdAt: "asc" },
   });
   const activeCount = searchLocations.filter((l) => l.active).length;
+  const denied = accessDenialReason(profile);
 
   return (
     <div className="flex flex-col gap-6">
@@ -96,7 +97,7 @@ export default async function PilotCarDashboardPage({
 
       <section className="rounded border border-brand-border bg-brand-panel p-4">
         <h2 className="mb-2 font-semibold text-brand-text">Load board</h2>
-        {hasLoadBoardAccess(profile) ? (
+        {!denied ? (
           <BrowseLoadsPanel
             savedLocations={searchLocations
               .filter((l) => l.active)
@@ -111,6 +112,8 @@ export default async function PilotCarDashboardPage({
             initialLoadId={loadId}
             initialSearchLocationId={searchLocationId}
           />
+        ) : denied === "admin_off" ? (
+          <p className="text-sm text-brand-muted">{ACCESS_PAUSED_MESSAGE}</p>
         ) : (
           <p className="text-sm text-brand-muted">
             Your trial has ended —{" "}

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { hasLoadBoardAccess } from "@/lib/subscription";
+import { ACCESS_PAUSED_MESSAGE, accessDenialReason } from "@/lib/access";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function GET(
@@ -19,9 +19,10 @@ export async function GET(
   const profile = await prisma.pilotCarProfile.findUnique({
     where: { userId: session.user.id },
   });
-  if (!profile || !hasLoadBoardAccess(profile)) {
+  const denied = profile ? accessDenialReason(profile) : "no_subscription";
+  if (!profile || denied) {
     return NextResponse.json(
-      { error: "An active or trialing Pilot Car subscription is required." },
+      { error: denied === "admin_off" ? ACCESS_PAUSED_MESSAGE : "An active or trialing Pilot Car subscription is required." },
       { status: 403 }
     );
   }
